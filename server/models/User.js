@@ -25,17 +25,9 @@ const UserSchema = new mongoose.Schema(
       required: true,
       min: 5,
     },
-    isAdmin: {
-      type: Boolean,
-      default: false,
-    },
     picturePath: {
       type: String,
       default: '',
-    },
-    picturePath: {
-      type: Array,
-      default: [],
     },
     friends: {
       type: Array,
@@ -44,10 +36,10 @@ const UserSchema = new mongoose.Schema(
     location: String,
     occupation: String,
     viewedProfile: Number,
+    impressions: Number,
   },
   { timestamps: true }
 );
 
 const User = mongoose.model('User', UserSchema);
-
 export default User;
