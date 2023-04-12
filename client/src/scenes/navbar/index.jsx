@@ -38,7 +38,7 @@ const Navbar = () => {
   const neutralLight = theme.palette.neutral.light;
   const dark = theme.palette.neutral.dark;
   const background = theme.palette.neutral.default;
-  const primaryLight = theme.palette.neutral.light;
+  const primaryLight = theme.palette.neutral.mediumMain;
   const alt = theme.palette.neutral.alt;
 
   // const fullName = `${user.firstName} ${user.lastName}`;
