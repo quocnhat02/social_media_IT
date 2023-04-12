@@ -20,8 +20,10 @@ import {
   Help,
   Menu,
   Close,
+  Info,
 } from '@mui/icons-material';
 
+// import InfoIcon from '@mui/icons-material/Info';
 import { useDispatch, useSelector } from 'react-redux';
 import { setMode, setLogout } from 'state';
 import { useNavigate } from 'react-router-dom';
@@ -92,7 +94,8 @@ const Navbar = () => {
           </IconButton>
           <Message sx={{ fontSize: '25px' }} />
           <Notifications sx={{ fontSize: '25px' }} />
-          <Help sx={{ fontSize: '25px' }} />
+          <Info sx={{ fontSize: '25px' }} />
+          {/* <Help sx={{ fontSize: '25px' }} /> */}
           <FormControl variant='standard' value={fullName}>
             <Select
               value={fullName}
