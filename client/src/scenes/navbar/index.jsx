@@ -95,7 +95,7 @@ const Navbar = () => {
             <Message sx={{ fontSize: '25px' }} />
           </IconButton>
           <Notifications sx={{ fontSize: '25px' }} />
-          <Info sx={{ fontSize: '25px' }} />
+          {/* <Info sx={{ fontSize: '25px' }} /> */}
           {/* <Help sx={{ fontSize: '25px' }} /> */}
           <FormControl variant='standard' value={fullName}>
             <Select

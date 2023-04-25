@@ -8,7 +8,7 @@ import Header from './CustomHeader';
 import StandardMessageForm from './StandardMessageForm';
 import Navbar from 'scenes/navbar';
 
-const Chat = () => {
+const ChatPage = () => {
   const chatProps = useMultiChatLogic(
     '65b1bd8f-b44d-4160-903c-595702015eaf',
     'newuser',
@@ -33,4 +33,4 @@ const Chat = () => {
   );
 };
 
-export default Chat;
+export default ChatPage;
