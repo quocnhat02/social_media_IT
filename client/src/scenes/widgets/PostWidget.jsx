@@ -27,6 +27,7 @@ const PostWidget = ({
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
   const user = useSelector((state) => state.user);
+  const notifications = useSelector((state) => state.notifications);
   const loggedInUserId = useSelector((state) => state.user._id);
   const isLiked = Boolean(likes[loggedInUserId]);
   const likeCount = Object.keys(likes).length;
@@ -87,7 +88,7 @@ const PostWidget = ({
     dispatch(setPost({ post: updatedPost }));
     const updatedNotification = await getAllNotifications();
     console.log(updatedNotification);
-    dispatch(setNotifications({ updatedNotification }));
+    dispatch(setNotifications({ ...notifications, updatedNotification }));
   };
 
   return (

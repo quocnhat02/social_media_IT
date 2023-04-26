@@ -23,14 +23,10 @@ const NotificationPage = () => {
       component: <Notification notifications={notifications.read} />,
     },
 
-    {
-      name: 'All',
-      component: (
-        <Notification
-          notifications={[...notifications.read, ...notifications.unread]}
-        />
-      ),
-    },
+    // {
+    //   name: 'All',
+    //   component: <Box>All</Box>,
+    // },
   ];
 
   return (
