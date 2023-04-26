@@ -70,8 +70,10 @@ export const likePost = async (req, res) => {
       { new: true }
     );
 
-    const newNotification = new Notification(req.body.notificationPayload);
-    await newNotification.save();
+    if (userId !== post.userId) {
+      const newNotification = new Notification(req.body.notificationPayload);
+      await newNotification.save();
+    }
 
     res.status(200).json(updatedPost);
   } catch (error) {

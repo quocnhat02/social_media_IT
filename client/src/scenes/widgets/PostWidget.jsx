@@ -46,7 +46,9 @@ const PostWidget = ({
         userId: loggedInUserId,
         notificationPayload: {
           user: postUserId,
-          title: `${name} ${isLiked ? 'unliked' : 'liked'} your blog`,
+          title: `${user.firstName} ${user.lastName} ${
+            isLiked ? 'unliked' : 'liked'
+          } your blog`,
           onClick: `/posts`,
         },
       }),
