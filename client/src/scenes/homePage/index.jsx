@@ -42,7 +42,6 @@ const HomePage = () => {
           (notification) => !notification.read
         ),
       };
-      console.log(notificationsTemp);
 
       dispatch(setNotifications(notificationsTemp));
     }

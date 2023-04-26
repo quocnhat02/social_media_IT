@@ -104,17 +104,18 @@ const Navbar = () => {
               variant='h6'
               sx={{
                 position: 'absolute',
-                display: 'flex',
+                display: 'block',
                 alignItems: 'center',
                 justifyContent: 'center',
+                textAlign: 'center',
                 backgroundColor: 'red',
                 color: 'white',
                 fontWeight: 400,
                 borderRadius: '50%',
-                p: '2px 3px',
+                p: '4px 6px',
                 top: 0,
                 right: 0,
-                lineHeight: '14px',
+                lineHeight: '10px',
               }}
             >
               {notifications?.unread?.length | '0'}

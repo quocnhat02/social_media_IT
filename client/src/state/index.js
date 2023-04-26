@@ -47,7 +47,6 @@ export const authSlice = createSlice({
       state.posts = updatedPosts;
     },
     setNotifications: (state, action) => {
-      console.log(action);
       state.notifications = action.payload;
     },
   },
