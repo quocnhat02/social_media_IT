@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Box, Typography, useTheme } from '@mui/material';
 import Friend from 'components/Friend';
 import WidgetWrapper from 'components/WidgetWrapper';
@@ -38,9 +39,9 @@ const FriendListWidget = ({ userId }) => {
         Friend List
       </Typography>
       <Box display='flex' flexDirection='column' gap='1.5rem'>
-        {friends.map((friend) => (
+        {friends.map((friend, index) => (
           <Friend
-            key={friend._id}
+            key={`${friend._id}-${index}`}
             friendId={friend._id}
             name={`${friend.firstName} ${friend.lastName}`}
             userPicturePath={friend.picturePath}

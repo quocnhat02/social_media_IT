@@ -1,4 +1,5 @@
 import User from '../models/User.js';
+import Notification from '../models/Notification.js';
 
 // READ
 export const getUser = async (req, res) => {
@@ -63,5 +64,21 @@ export const addRemoveFriend = async (req, res) => {
     res.status(200).json(formattedFriends);
   } catch (error) {
     res.status(404).json({ message: error.message });
+  }
+};
+
+// GET Notifications
+export const getNotifications = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const notifications = await Notification.find({
+      user: userId,
+    }).sort({
+      createdAt: -1,
+    });
+
+    res.status(200).json({ success: true, notifications });
+  } catch (error) {
+    res.status(404).json({ success: false, message: error.message });
   }
 };

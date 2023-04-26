@@ -10,7 +10,7 @@ import Friend from 'components/Friend';
 import WidgetWrapper from 'components/WidgetWrapper';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setPost } from 'state';
+import { setNotifications, setPost } from 'state';
 
 const PostWidget = ({
   postId,
@@ -26,6 +26,8 @@ const PostWidget = ({
   const [isComments, setIsComments] = useState(false);
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
+  const user = useSelector((state) => state.user);
+  const notifications = useSelector((state) => state.notifications);
   const loggedInUserId = useSelector((state) => state.user._id);
   const isLiked = Boolean(likes[loggedInUserId]);
   const likeCount = Object.keys(likes).length;
@@ -34,6 +36,35 @@ const PostWidget = ({
   const main = palette.neutral.main;
   const primary = palette.primary.main;
 
+  const getAllNotifications = async () => {
+    const response = await fetch(
+      `http://localhost:3001/users/notifications/${user._id}`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    const notificationsResponse = await response.json();
+
+    if (notificationsResponse.success) {
+      const notificationsTemp = {
+        read: notificationsResponse.notifications.filter(
+          (notification) => notification.read
+        ),
+
+        unread: notificationsResponse.notifications.filter(
+          (notification) => !notification.read
+        ),
+      };
+
+      return notificationsTemp;
+    }
+  };
+
   const patchLike = async () => {
     const response = await fetch(`http://localhost:3001/posts/${postId}/like`, {
       method: 'PATCH',
@@ -41,11 +72,23 @@ const PostWidget = ({
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ userId: loggedInUserId }),
+      body: JSON.stringify({
+        userId: loggedInUserId,
+        notificationPayload: {
+          user: postUserId,
+          title: `${user.firstName} ${user.lastName} ${
+            isLiked ? 'unliked' : 'liked'
+          } your blog`,
+          onClick: `/posts`,
+        },
+      }),
     });
 
     const updatedPost = await response.json();
     dispatch(setPost({ post: updatedPost }));
+    const updatedNotification = await getAllNotifications();
+    console.log(updatedNotification);
+    dispatch(setNotifications({ ...notifications, updatedNotification }));
   };
 
   return (

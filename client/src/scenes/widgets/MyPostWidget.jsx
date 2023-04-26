@@ -25,6 +25,8 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPosts } from 'state';
 
+import { toast } from 'react-toastify';
+
 const MyPostWidget = ({ picturePath }) => {
   const dispatch = useDispatch();
   const [isImage, setIsImage] = useState(false);
@@ -55,6 +57,16 @@ const MyPostWidget = ({ picturePath }) => {
 
     const posts = await response.json();
     dispatch(setPosts({ posts }));
+    toast.success('🦄 Create post successful!', {
+      position: 'top-right',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'light',
+    });
     setImage(null);
     setPost('');
   };

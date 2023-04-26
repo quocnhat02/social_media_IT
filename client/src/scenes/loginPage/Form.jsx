@@ -17,6 +17,8 @@ import { setLogin } from 'state';
 import Dropzone from 'react-dropzone';
 import FlexBetween from 'components/FlexBetween';
 
+import { toast } from 'react-toastify';
+
 const registerSchema = yup.object().shape({
   firstName: yup.string().required('required'),
   lastName: yup.string().required('required'),
@@ -74,8 +76,33 @@ const Form = () => {
     const savedUser = await savedUserResponse.json();
     onSubmitProps.resetForm();
 
+    if (savedUser.error) {
+      setPageType('login');
+      toast.error('🦄 Register Failed!', {
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'light',
+      });
+      return;
+    }
+
     if (savedUser) {
       setPageType('login');
+      toast.success('🦄 Register Success!', {
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'light',
+      });
     }
   };
 
@@ -88,6 +115,20 @@ const Form = () => {
 
     const loggedIn = await loggedInResponse.json();
     onSubmitProps.resetForm();
+
+    if (loggedIn.msg) {
+      toast.error('🦄 Login Failed!', {
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'light',
+      });
+      return;
+    }
     if (loggedIn) {
       dispatch(
         setLogin({
@@ -96,6 +137,16 @@ const Form = () => {
         })
       );
       navigate('/home');
+      toast.success('🦄 Login Success!', {
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'light',
+      });
     }
   };
 
