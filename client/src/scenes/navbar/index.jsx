@@ -31,6 +31,7 @@ import FlexBetween from 'components/FlexBetween';
 
 const Navbar = () => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
+  const notifications = useSelector((state) => state.notifications);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
@@ -94,7 +95,31 @@ const Navbar = () => {
           <IconButton onClick={() => navigate('/chat')}>
             <Message sx={{ fontSize: '25px' }} />
           </IconButton>
-          <Notifications sx={{ fontSize: '25px' }} />
+          <IconButton
+            sx={{ position: 'relative' }}
+            onClick={() => navigate('/notifications')}
+          >
+            <Notifications sx={{ fontSize: '25px' }} />
+            <Typography
+              variant='h6'
+              sx={{
+                position: 'absolute',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: 'red',
+                color: 'white',
+                fontWeight: 400,
+                borderRadius: '50%',
+                p: '2px 3px',
+                top: 0,
+                right: 0,
+                lineHeight: '14px',
+              }}
+            >
+              {notifications.unread.length}
+            </Typography>
+          </IconButton>
           {/* <Info sx={{ fontSize: '25px' }} /> */}
           {/* <Help sx={{ fontSize: '25px' }} /> */}
           <FormControl variant='standard' value={fullName}>
@@ -169,9 +194,35 @@ const Navbar = () => {
                 <LightMode sx={{ color: dark, fontSize: '25px' }} />
               )}
             </IconButton>
-            <Message sx={{ fontSize: '25px' }} />
-            <Notifications sx={{ fontSize: '25px' }} />
-            <Help sx={{ fontSize: '25px' }} />
+            <IconButton onClick={() => navigate('/chat')}>
+              <Message sx={{ fontSize: '25px' }} />
+            </IconButton>
+            <IconButton
+              sx={{ position: 'relative' }}
+              onClick={() => navigate('/notifications')}
+            >
+              <Notifications sx={{ fontSize: '25px' }} />
+              <Typography
+                variant='h6'
+                sx={{
+                  position: 'absolute',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: 'red',
+                  color: 'white',
+                  fontWeight: 400,
+                  borderRadius: '50%',
+                  p: '2px 3px',
+                  top: 0,
+                  right: 0,
+                  lineHeight: '14px',
+                }}
+              >
+                {notifications.unread.length}
+              </Typography>
+            </IconButton>
+            {/* <Help sx={{ fontSize: '25px' }} /> */}
             <FormControl variant='standard' value={fullName}>
               <Select
                 value={fullName}

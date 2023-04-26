@@ -26,6 +26,7 @@ const PostWidget = ({
   const [isComments, setIsComments] = useState(false);
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
+  const user = useSelector((state) => state.user);
   const loggedInUserId = useSelector((state) => state.user._id);
   const isLiked = Boolean(likes[loggedInUserId]);
   const likeCount = Object.keys(likes).length;
@@ -41,7 +42,14 @@ const PostWidget = ({
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ userId: loggedInUserId }),
+      body: JSON.stringify({
+        userId: loggedInUserId,
+        notificationPayload: {
+          user: postUserId,
+          title: `${name} ${isLiked ? 'unliked' : 'liked'} your blog`,
+          onClick: `/posts`,
+        },
+      }),
     });
 
     const updatedPost = await response.json();

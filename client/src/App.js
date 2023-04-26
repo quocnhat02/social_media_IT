@@ -3,6 +3,7 @@ import HomePage from 'scenes/homePage';
 import LoginPage from 'scenes/loginPage';
 import ProfilePage from 'scenes/profilePage';
 import ChatPage from 'scenes/chatPage';
+import NotificationPage from 'scenes/notificationPage';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { CssBaseline, ThemeProvider } from '@mui/material';
@@ -28,6 +29,10 @@ function App() {
             <Route
               path='/home'
               element={isAuth ? <HomePage /> : <Navigate to='/' />}
+            />
+            <Route
+              path='/notifications'
+              element={isAuth ? <NotificationPage /> : <Navigate to='/' />}
             />
             <Route
               path='/chat'

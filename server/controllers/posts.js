@@ -1,6 +1,6 @@
 import Post from '../models/Post.js';
 import User from '../models/User.js';
-// import Notification from '../models/Notification.js';
+import Notification from '../models/Notification.js';
 
 // CREATE
 export const createPost = async (req, res) => {
@@ -70,8 +70,8 @@ export const likePost = async (req, res) => {
       { new: true }
     );
 
-    // const newNotification = new Notification(req.body);
-    // await newNotification.save();
+    const newNotification = new Notification(req.body.notificationPayload);
+    await newNotification.save();
 
     res.status(200).json(updatedPost);
   } catch (error) {
