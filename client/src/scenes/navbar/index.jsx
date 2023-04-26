@@ -117,7 +117,7 @@ const Navbar = () => {
                 lineHeight: '14px',
               }}
             >
-              {notifications.unread.length}
+              {notifications?.unread?.length | '0'}
             </Typography>
           </IconButton>
           {/* <Info sx={{ fontSize: '25px' }} /> */}
@@ -219,7 +219,7 @@ const Navbar = () => {
                   lineHeight: '14px',
                 }}
               >
-                {notifications.unread.length}
+                {notifications?.unread?.length | '0'}
               </Typography>
             </IconButton>
             {/* <Help sx={{ fontSize: '25px' }} /> */}

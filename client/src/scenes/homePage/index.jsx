@@ -31,7 +31,7 @@ const HomePage = () => {
     );
 
     const notificationsResponse = await response.json();
-    console.log(notificationsResponse);
+
     if (notificationsResponse.success) {
       const notificationsTemp = {
         read: notificationsResponse.notifications.filter(
