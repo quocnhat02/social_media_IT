@@ -9,6 +9,8 @@ const initialState = {
     read: [],
     unread: [],
   },
+  socket: null,
+  unreadCount: 0,
 };
 
 export const authSlice = createSlice({
@@ -49,6 +51,12 @@ export const authSlice = createSlice({
     setNotifications: (state, action) => {
       state.notifications = action.payload;
     },
+    setSocket: (state, action) => {
+      state.socket = action.payload;
+    },
+    setUnreadCount: (state, action) => {
+      state.unreadCount = action.payload;
+    },
   },
 });
 
@@ -60,6 +68,8 @@ export const {
   setPosts,
   setPost,
   setNotifications,
+  setSocket,
+  setUnreadCount,
 } = authSlice.actions;
 
 export default authSlice.reducer;

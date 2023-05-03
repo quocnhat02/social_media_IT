@@ -7,15 +7,19 @@ import UserWidget from 'scenes/widgets/UserWidget';
 import MyPostWidget from 'scenes/widgets/MyPostWidget';
 import PostsWidget from 'scenes/widgets/PostsWidget';
 import FriendListWidget from 'scenes/widgets/FriendListWidget';
-import { setNotifications } from 'state';
+import { setNotifications, setSocket, setUnreadCount } from 'state';
 
-// import { io } from 'socket.io-client';
-// const socket = io('http://localhost:5000');
+import { io } from 'socket.io-client';
+import { toast } from 'react-toastify';
+const socket = io('http://localhost:3001');
 
 const HomePage = () => {
   const isNonMobileScreens = useMediaQuery('(min-width:1000px)');
   const { _id, picturePath } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
+  const user = useSelector((state) => state.user);
+  const notification = useSelector((state) => state.notification);
+  const unreadCount = useSelector((state) => state.unreadCount);
   const dispatch = useDispatch();
 
   const getAllNotifications = async () => {
@@ -44,12 +48,36 @@ const HomePage = () => {
       };
 
       dispatch(setNotifications(notificationsTemp));
+
+      dispatch(setUnreadCount(notificationsTemp.unread.length));
     }
   };
 
   useEffect(() => {
     getAllNotifications();
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      socket.emit('join', user._id);
+    }
+
+    socket.off('newNotification').on('newNotification', (data) => {
+      // toast.dismiss();
+      // toast.success(data.title);
+      toast.info(`🦄 ${data.title}`, {
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'light',
+      });
+      dispatch(setUnreadCount(unreadCount + 1));
+    });
+  }, [user]);
 
   return (
     <Box>

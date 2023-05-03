@@ -10,7 +10,10 @@ import Friend from 'components/Friend';
 import WidgetWrapper from 'components/WidgetWrapper';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setNotifications, setPost } from 'state';
+import { setNotifications, setPost, setUnreadCount } from 'state';
+
+import { io } from 'socket.io-client';
+const socket = io('http://localhost:3001');
 
 const PostWidget = ({
   postId,
@@ -35,6 +38,35 @@ const PostWidget = ({
   const { palette } = useTheme();
   const main = palette.neutral.main;
   const primary = palette.primary.main;
+
+  // const getAllNotifications = async () => {
+  //   const response = await fetch(
+  //     `http://localhost:3001/users/notifications/${user._id}`,
+  //     {
+  //       method: 'GET',
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //         'Content-Type': 'application/json',
+  //       },
+  //     }
+  //   );
+
+  //   const notificationsResponse = await response.json();
+
+  //   if (notificationsResponse.success) {
+  //     const notificationsTemp = {
+  //       read: notificationsResponse.notifications.filter(
+  //         (notification) => notification.read
+  //       ),
+
+  //       unread: notificationsResponse.notifications.filter(
+  //         (notification) => !notification.read
+  //       ),
+  //     };
+
+  //     return notificationsTemp;
+  //   }
+  // };
 
   const getAllNotifications = async () => {
     const response = await fetch(
@@ -61,7 +93,9 @@ const PostWidget = ({
         ),
       };
 
-      return notificationsTemp;
+      dispatch(setNotifications(notificationsTemp));
+
+      dispatch(setUnreadCount(notificationsTemp.unread.length));
     }
   };
 
@@ -84,11 +118,18 @@ const PostWidget = ({
       }),
     });
 
+    socket.emit('newNotification', {
+      userId: postUserId,
+      title: `${user.firstName} ${user.lastName} ${
+        isLiked ? 'unliked' : 'liked'
+      } your blog`,
+    });
+
     const updatedPost = await response.json();
     dispatch(setPost({ post: updatedPost }));
-    const updatedNotification = await getAllNotifications();
-    console.log(updatedNotification);
-    dispatch(setNotifications({ ...notifications, updatedNotification }));
+    getAllNotifications();
+    // const updatedNotification = await getAllNotifications();
+    // dispatch(setNotifications({ ...notifications, updatedNotification }));
   };
 
   return (

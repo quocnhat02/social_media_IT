@@ -25,7 +25,7 @@ import {
 
 // import InfoIcon from '@mui/icons-material/Info';
 import { useDispatch, useSelector } from 'react-redux';
-import { setMode, setLogout } from 'state';
+import { setMode, setLogout, setNotifications } from 'state';
 import { useNavigate } from 'react-router-dom';
 import FlexBetween from 'components/FlexBetween';
 
@@ -35,6 +35,8 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
+  const token = useSelector((state) => state.token);
+  const unreadCount = useSelector((state) => state.unreadCount);
   const isNonMobileScreens = useMediaQuery('(min-width: 1000px)');
 
   const theme = useTheme();
@@ -45,6 +47,40 @@ const Navbar = () => {
   const alt = theme.palette.neutral.alt;
 
   const fullName = `${user.firstName} ${user.lastName}`;
+
+  const getAllNotifications = async () => {
+    const response = await fetch(
+      `http://localhost:3001/users/notifications/${user._id}`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    const notificationsResponse = await response.json();
+
+    if (notificationsResponse.success) {
+      const notificationsTemp = {
+        read: notificationsResponse.notifications.filter(
+          (notification) => notification.read
+        ),
+
+        unread: notificationsResponse.notifications.filter(
+          (notification) => !notification.read
+        ),
+      };
+
+      dispatch(setNotifications(notificationsTemp));
+    }
+  };
+
+  const handleNotification = () => {
+    getAllNotifications();
+    navigate('/notifications');
+  };
 
   return (
     <FlexBetween padding='1rem 6%' backgroundColor={alt}>
@@ -97,7 +133,7 @@ const Navbar = () => {
           </IconButton>
           <IconButton
             sx={{ position: 'relative' }}
-            onClick={() => navigate('/notifications')}
+            onClick={() => handleNotification()}
           >
             <Notifications sx={{ fontSize: '25px' }} />
             <Typography
@@ -118,7 +154,7 @@ const Navbar = () => {
                 lineHeight: '10px',
               }}
             >
-              {notifications?.unread?.length | '0'}
+              {unreadCount | '0'}
             </Typography>
           </IconButton>
           {/* <Info sx={{ fontSize: '25px' }} /> */}
@@ -200,7 +236,7 @@ const Navbar = () => {
             </IconButton>
             <IconButton
               sx={{ position: 'relative' }}
-              onClick={() => navigate('/notifications')}
+              onClick={() => handleNotification()}
             >
               <Notifications sx={{ fontSize: '25px' }} />
               <Typography
@@ -220,7 +256,7 @@ const Navbar = () => {
                   lineHeight: '14px',
                 }}
               >
-                {notifications?.unread?.length | '0'}
+                {unreadCount | '0'}
               </Typography>
             </IconButton>
             {/* <Help sx={{ fontSize: '25px' }} /> */}
