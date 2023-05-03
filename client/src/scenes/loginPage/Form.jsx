@@ -13,11 +13,13 @@ import { Formik } from 'formik';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { setLogin } from 'state';
+import { setLogin, setSocket } from 'state';
 import Dropzone from 'react-dropzone';
 import FlexBetween from 'components/FlexBetween';
-
 import { toast } from 'react-toastify';
+
+import { io } from 'socket.io-client';
+const socket = io('http://localhost:3001');
 
 const registerSchema = yup.object().shape({
   firstName: yup.string().required('required'),
@@ -136,6 +138,9 @@ const Form = () => {
           token: loggedIn.token,
         })
       );
+
+      socket.emit('join', loggedIn.user._id);
+
       navigate('/home');
       toast.success('🦄 Login Success!', {
         position: 'top-right',
