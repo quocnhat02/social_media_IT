@@ -16,6 +16,7 @@ import { createPost } from './controllers/posts.js';
 import { verifyToken } from './middlewares/auth.js';
 import http from 'http';
 import { Server } from 'socket.io';
+import compression from 'compression';
 
 // CONFIGURATIONS
 const __filename = fileURLToPath(import.meta.url);
@@ -24,6 +25,7 @@ dotenv.config();
 const app = express();
 
 // MIDDLEWARES
+app.use(compression());
 app.use(express.json());
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }));
