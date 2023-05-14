@@ -63,8 +63,6 @@ const HomePage = () => {
     }
 
     socket.off('newNotification').on('newNotification', (data) => {
-      // toast.dismiss();
-      // toast.success(data.title);
       toast.info(`🦄 ${data.title}`, {
         position: 'top-right',
         autoClose: 5000,
