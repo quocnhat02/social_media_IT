@@ -9,7 +9,7 @@ import MyChat from './chatComponent/MyChat';
 const ChatPage = () => {
   const user = useSelector((state) => state.user);
   const [fetchAgain, setFetchAgain] = useState(false);
-  console.log(user);
+
   return (
     <>
       <Navbar />

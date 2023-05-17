@@ -29,7 +29,11 @@ const ProfileModal = ({ user, children }) => {
       {children ? (
         <span onClick={handleOpen}>{children}</span>
       ) : (
-        <IconButton display={{ sm: 'flex' }} onClick={handleOpen}>
+        <IconButton
+          display={{ sm: 'flex' }}
+          sx={{ marginLeft: 'auto' }}
+          onClick={handleOpen}
+        >
           <VisibilityOutlinedIcon />
         </IconButton>
       )}

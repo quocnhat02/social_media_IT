@@ -192,7 +192,10 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             alignItems={'center'}
           >
             <IconButton
-              display={{ sm: 'flex', md: 'none' }}
+              display={{ sm: 'flex', xs: 'flex', md: 'none' }}
+              sx={{
+                marginRight: '1.2rem',
+              }}
               onClick={() => dispatch(setSelectedChat(''))}
             >
               <ArrowBackOutlinedIcon />

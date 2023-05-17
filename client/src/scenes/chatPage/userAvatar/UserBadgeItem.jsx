@@ -7,8 +7,8 @@ const UserBadgeItem = ({ user, handleFunction }) => {
   return (
     <Box
       sx={{
-        paddingX: 2,
-        paddingY: 1,
+        paddingX: '6px',
+        paddingY: '3px',
         borderRadius: '12px',
         display: 'flex',
         justifyContent: 'center',
@@ -16,11 +16,12 @@ const UserBadgeItem = ({ user, handleFunction }) => {
         gap: '2px',
         fontSize: {
           sm: '10px',
-          md: '14px',
+          xs: '8px',
+          md: '12px',
         },
+        marginRight: '0.2rem',
+        marginBottom: '0.5rem',
       }}
-      m={1}
-      mb={2}
       variant={'solid'}
       backgroundColor={'#E90064'}
       color={'white'}

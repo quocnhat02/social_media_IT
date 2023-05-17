@@ -23,7 +23,7 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
+  width: 500,
   bgcolor: '#A459D1',
   border: '2px solid #000',
   boxShadow: 24,
@@ -52,7 +52,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
   const selectedChat = useSelector((state) => state.selectedChat);
 
   const handleAddUser = async (user1) => {
-    if (dispatch(selectedChat.users.find((u) => u._id === user1._id))) {
+    if (selectedChat.users.find((u) => u._id === user1._id)) {
       toast({
         title: 'User already in group',
         status: 'error',
@@ -63,7 +63,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
       return;
     }
 
-    if (dispatch(selectedChat.groupAdmin._id !== user._id)) {
+    if (selectedChat.groupAdmin._id !== user._id) {
       toast({
         title: 'Only admin can add someone!',
         status: 'error',
@@ -235,6 +235,9 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
     <>
       <IconButton
         display={{ sm: 'flex' }}
+        sx={{
+          marginLeft: 'auto',
+        }}
         onClick={handleOpen}
         // icon={<VisibilityOutlinedIcon />}
       >
@@ -251,7 +254,14 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
             {selectedChat.chatName}
           </Typography>
           <Box>
-            <Box w={'100%'} display={'flex'} flexWrap={'wrap'} pb={3}>
+            <Box
+              width={'100%'}
+              display={'flex'}
+              sx={{
+                flexWrap: 'wrap',
+                paddingBottom: 3,
+              }}
+            >
               {selectedChat.users.map((u) => (
                 <UserBadgeItem
                   key={u._id}
@@ -260,49 +270,76 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
                 />
               ))}
             </Box>
-            <FormControl display={'flex'}>
-              <Input
-                placeholder='Chat Name'
-                mb={3}
-                value={groupChatName}
-                onChange={(e) => setGroupChatName(e.target.value)}
-              />
-              {loading ? (
-                <CircularProgress color='secondary' />
-              ) : (
-                searchResult?.map((user) => (
-                  <UserListItem
-                    key={user._id}
-                    user={user}
-                    handleFunction={() => handleAddUser(user)}
-                  />
-                ))
-              )}
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                flexDirection: 'column',
+                alignItems: 'center',
+              }}
+            >
+              <FormControl sx={{ width: '70%' }}>
+                <Input
+                  placeholder='Chat Name'
+                  sx={{
+                    marginBottom: 1,
+                    fontSize: {
+                      md: '18px',
+                      sm: '14px',
+                    },
+                  }}
+                  value={groupChatName}
+                  onChange={(e) => setGroupChatName(e.target.value)}
+                />
+              </FormControl>
+              <FormControl sx={{ width: '70%' }}>
+                <Input
+                  sx={{
+                    marginBottom: 1,
+                    fontSize: {
+                      md: '18px',
+                      sm: '14px',
+                    },
+                  }}
+                  placeholder='Add User to group'
+                  onChange={(e) => handleSearch(e.target.value)}
+                />
+              </FormControl>
               <Button
                 variant={'solid'}
                 sx={{
                   background: '#159895',
                   marginTop: 1,
+                  marginBottom: 1,
+                  flexDirection: 'row-reverse',
                 }}
                 color={'white'}
-                // isLoading={renameLoading}
                 onClick={handleRename}
               >
                 Update
               </Button>
-            </FormControl>
-            <FormControl>
-              <Input
-                sx={{
-                  marginBottom: 1,
-                }}
-                placeholder='Add User to group'
-                onChange={(e) => handleSearch(e.target.value)}
-              />
-            </FormControl>
+            </Box>
+
+            {loading ? (
+              <CircularProgress color='secondary' />
+            ) : (
+              searchResult?.map((user) => (
+                <UserListItem
+                  key={user._id}
+                  user={user}
+                  handleFunction={() => handleAddUser(user)}
+                />
+              ))
+            )}
           </Box>
 
-          <Box sx={{ display: 'flex', flexDirection: 'row-reverse' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row-reverse',
+              width: '100%',
+            }}
+          >
             <Button
               sx={{
                 background: '#FE6244',
