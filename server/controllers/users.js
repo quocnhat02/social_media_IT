@@ -1,6 +1,8 @@
 import User from '../models/User.js';
 import Notification from '../models/Notification.js';
 
+import asyncHandler from 'express-async-handler';
+
 // READ
 export const getUser = async (req, res) => {
   try {
@@ -82,3 +84,22 @@ export const getNotifications = async (req, res) => {
     res.status(404).json({ success: false, message: error.message });
   }
 };
+
+// GET SEARCH CHAT
+export const getAllUsers = asyncHandler(async (req, res) => {
+  const keyword = req.query.search
+    ? {
+        $or: [
+          { firstName: { $regex: req.query.search, $options: 'i' } },
+          { lastName: { $regex: req.query.search, $options: 'i' } },
+          { email: { $regex: req.query.search, $options: 'i' } },
+        ],
+      }
+    : {};
+
+  const users = await User.find(keyword).find({
+    _id: { $ne: req.user._id },
+  });
+
+  res.send(users);
+});

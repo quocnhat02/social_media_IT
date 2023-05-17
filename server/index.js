@@ -11,12 +11,15 @@ import { fileURLToPath } from 'url';
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/users.js';
 import postRoutes from './routes/posts.js';
+import chatRoutes from './routes/chat.js';
+import messageRoutes from './routes/message.js';
 import { register } from './controllers/auth.js';
 import { createPost } from './controllers/posts.js';
 import { verifyToken } from './middlewares/auth.js';
 import http from 'http';
 import { Server } from 'socket.io';
 import compression from 'compression';
+import { errorHandler, notFound } from './middlewares/error.js';
 
 // CONFIGURATIONS
 const __filename = fileURLToPath(import.meta.url);
@@ -56,11 +59,17 @@ app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
 app.use('/posts', postRoutes);
 
+app.use('/api/chat', chatRoutes);
+app.use('/api/message', messageRoutes);
+
+app.use(notFound);
+app.use(errorHandler);
+
 const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: '*',
+    origin: 'http://localhost:3000',
   },
 });
 
@@ -74,6 +83,47 @@ io.on('connection', (socket) => {
   socket.on('newNotification', (notification) => {
     socket.to(notification.userId).emit('newNotification', notification);
   });
+
+  // chat
+  socket.on('setup', (userData) => {
+    socket.join(userData._id);
+    console.log(userData._id);
+    socket.emit('connected');
+  });
+
+  socket.on('join chat', (room) => {
+    socket.join(room);
+    console.log('User Joined Room: ' + room);
+  });
+
+  socket.on('new message', (newMessageReceived) => {
+    let chat = newMessageReceived.chat;
+
+    if (!chat.users) {
+      return console.log('chat.users not defined');
+    }
+
+    chat.users.forEach((user) => {
+      if (user._id === newMessageReceived.sender._id) {
+        return;
+      }
+
+      socket.in(user._id).emit('message received', newMessageReceived);
+    });
+  });
+
+  // socket.on('typing', (room) => {
+  //   socket.in(room).emit('typing');
+  // });
+
+  // socket.on('stop typing', (room) => {
+  //   socket.in(room).emit('stop typing');
+  // });
+
+  socket.off('setup', (userData) => {
+    console.log('USER DISCONNECTED');
+    socket.leave(userData._id);
+  });
 });
 
 // MONGOOSE
@@ -84,6 +134,7 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(() => {
+    console.log('MongoDB connected');
     server.listen(PORT, () =>
       console.log(`Server running on http://localhost:${PORT}`)
     );

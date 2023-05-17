@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import HomePage from 'scenes/homePage';
 import LoginPage from 'scenes/loginPage';
 import ProfilePage from 'scenes/profilePage';
-// import ChatPage from 'scenes/chatPageEx';
 import NotificationPage from 'scenes/notificationPage';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
@@ -12,6 +11,7 @@ import { themeSettings } from 'theme';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ChatPage from 'scenes/chatPage/ChatPage';
 
 function App() {
   const mode = useSelector((state) => state.mode);
@@ -34,10 +34,10 @@ function App() {
               path='/notifications'
               element={isAuth ? <NotificationPage /> : <Navigate to='/' />}
             />
-            {/* <Route
+            <Route
               path='/chat'
               element={isAuth ? <ChatPage /> : <Navigate to='/' />}
-            /> */}
+            />
             <Route
               path='/profile/:userId'
               element={isAuth ? <ProfilePage /> : <Navigate to='/' />}

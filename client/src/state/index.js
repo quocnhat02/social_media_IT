@@ -11,6 +11,9 @@ const initialState = {
   },
   socket: null,
   unreadCount: 0,
+  selectedChat: null,
+  chats: [],
+  fetchAgain: false,
 };
 
 export const authSlice = createSlice({
@@ -57,6 +60,15 @@ export const authSlice = createSlice({
     setUnreadCount: (state, action) => {
       state.unreadCount = action.payload;
     },
+    setSelectedChat: (state, action) => {
+      state.selectedChat = action.payload;
+    },
+    setChats: (state, action) => {
+      state.chats = action.payload;
+    },
+    setFetchAgain: (state, action) => {
+      state.fetchAgain = action.payload;
+    },
   },
 });
 
@@ -70,6 +82,9 @@ export const {
   setNotifications,
   setSocket,
   setUnreadCount,
+  setSelectedChat,
+  setChats,
+  setFetchAgain,
 } = authSlice.actions;
 
 export default authSlice.reducer;
