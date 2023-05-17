@@ -5,7 +5,7 @@ import UserListItem from '../userAvatar/UserListItem';
 import { throttle } from 'lodash';
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
-import { setFetchAgain, setSelectedChat } from 'state';
+import { setSelectedChat } from 'state';
 import {
   Box,
   Button,
@@ -13,7 +13,6 @@ import {
   IconButton,
   Input,
   Modal,
-  TextField,
   Typography,
 } from '@mui/material';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
@@ -25,13 +24,13 @@ const style = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 400,
-  bgcolor: 'background.paper',
+  bgcolor: '#A459D1',
   border: '2px solid #000',
   boxShadow: 24,
   p: 4,
 };
 
-const UpdateGroupChatModal = ({ fetchMessages }) => {
+const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
   const [groupChatName, setGroupChatName] = useState();
   const [search, setSearch] = useState('');
   const [searchResult, setSearchResult] = useState([]);
@@ -51,7 +50,6 @@ const UpdateGroupChatModal = ({ fetchMessages }) => {
   const token = useSelector((state) => state.token);
   const user = useSelector((state) => state.user);
   const selectedChat = useSelector((state) => state.selectedChat);
-  const fetchAgain = useSelector((state) => state.fetchAgain);
 
   const handleAddUser = async (user1) => {
     if (dispatch(selectedChat.users.find((u) => u._id === user1._id))) {
@@ -95,7 +93,7 @@ const UpdateGroupChatModal = ({ fetchMessages }) => {
       );
 
       dispatch(setSelectedChat(data));
-      dispatch(setFetchAgain(!fetchAgain));
+      setFetchAgain(!fetchAgain);
       setLoading(false);
     } catch (error) {
       toast({
@@ -141,7 +139,7 @@ const UpdateGroupChatModal = ({ fetchMessages }) => {
       user1._id === user._id
         ? dispatch(setSelectedChat())
         : dispatch(setSelectedChat(data));
-      dispatch(setFetchAgain(!fetchAgain));
+      setFetchAgain(!fetchAgain);
       fetchMessages();
       setLoading(false);
     } catch (error) {
@@ -179,7 +177,7 @@ const UpdateGroupChatModal = ({ fetchMessages }) => {
       );
 
       dispatch(setSelectedChat(data));
-      dispatch(setFetchAgain(!fetchAgain));
+      setFetchAgain(!fetchAgain);
       setRenameLoading(false);
     } catch (error) {
       toast({
@@ -212,7 +210,7 @@ const UpdateGroupChatModal = ({ fetchMessages }) => {
 
       const throttledSearch = throttle(async () => {
         const { data } = await axios.get(
-          `http://localhost:3001/api/users?search=${search}`,
+          `http://localhost:3001/users?search=${search}`,
           config
         );
         setLoading(false);
@@ -243,8 +241,8 @@ const UpdateGroupChatModal = ({ fetchMessages }) => {
         <VisibilityOutlinedIcon />
       </IconButton>
 
-      <Modal onClose={handleClose} isCentered>
-        <Box>
+      <Modal onClose={handleClose} open={open}>
+        <Box sx={style}>
           <Typography
             display={'flex'}
             fontSize={'35px'}
@@ -269,12 +267,25 @@ const UpdateGroupChatModal = ({ fetchMessages }) => {
                 value={groupChatName}
                 onChange={(e) => setGroupChatName(e.target.value)}
               />
+              {loading ? (
+                <CircularProgress color='secondary' />
+              ) : (
+                searchResult?.map((user) => (
+                  <UserListItem
+                    key={user._id}
+                    user={user}
+                    handleFunction={() => handleAddUser(user)}
+                  />
+                ))
+              )}
               <Button
                 variant={'solid'}
-                backgroundColor={'teal'}
+                sx={{
+                  background: '#159895',
+                  marginTop: 1,
+                }}
                 color={'white'}
-                ml={1}
-                isLoading={renameLoading}
+                // isLoading={renameLoading}
                 onClick={handleRename}
               >
                 Update
@@ -282,27 +293,25 @@ const UpdateGroupChatModal = ({ fetchMessages }) => {
             </FormControl>
             <FormControl>
               <Input
+                sx={{
+                  marginBottom: 1,
+                }}
                 placeholder='Add User to group'
-                mb={1}
                 onChange={(e) => handleSearch(e.target.value)}
               />
             </FormControl>
-            {loading ? (
-              <CircularProgress color='secondary' />
-            ) : (
-              searchResult?.map((user) => (
-                <UserListItem
-                  key={user._id}
-                  user={user}
-                  handleFunction={() => handleAddUser(user)}
-                />
-              ))
-            )}
           </Box>
 
-          <Button colorScheme='red' onClick={() => handleRemove(user)}>
-            Leave Group
-          </Button>
+          <Box sx={{ display: 'flex', flexDirection: 'row-reverse' }}>
+            <Button
+              sx={{
+                background: '#FE6244',
+              }}
+              onClick={() => handleRemove(user)}
+            >
+              Leave Group
+            </Button>
+          </Box>
         </Box>
       </Modal>
     </>

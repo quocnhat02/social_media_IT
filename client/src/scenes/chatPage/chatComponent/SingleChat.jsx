@@ -20,13 +20,13 @@ import ProfileModal from '../miscellaneous/ProfileModal';
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import CircularProgress from '@mui/material/CircularProgress';
 import ScrollableChat from './ScrollableChat';
-import { setSelectedChat } from 'state';
+import { setNotifications, setSelectedChat, setUnreadCount } from 'state';
 
 const ENDPOINT = 'http://localhost:3001';
 
 let socket, selectedChatCompare;
 
-const SingleChat = () => {
+const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [newMessage, setNewMessage] = useState();
@@ -86,6 +86,13 @@ const SingleChat = () => {
           {
             content: newMessage,
             chatId: selectedChat._id,
+            // notificationPayload: {
+            //   user: selectedChat,
+            //   title: `${user.firstName} ${user.lastName} ${
+            //     isLiked ? 'unliked' : 'liked'
+            //   } your blog`,
+            //   onClick: `/posts`,
+            // },
           },
           config
         );
@@ -123,6 +130,37 @@ const SingleChat = () => {
     selectedChatCompare = selectedChat;
   }, [selectedChat]);
 
+  // const getAllNotifications = async () => {
+  //   const response = await fetch(
+  //     `http://localhost:3001/users/notifications/${user._id}`,
+  //     {
+  //       method: 'GET',
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //         'Content-Type': 'application/json',
+  //       },
+  //     }
+  //   );
+
+  //   const notificationsResponse = await response.json();
+
+  //   if (notificationsResponse.success) {
+  //     const notificationsTemp = {
+  //       read: notificationsResponse.notifications.filter(
+  //         (notification) => notification.read
+  //       ),
+
+  //       unread: notificationsResponse.notifications.filter(
+  //         (notification) => !notification.read
+  //       ),
+  //     };
+
+  //     dispatch(setNotifications(notificationsTemp));
+
+  //     dispatch(setUnreadCount(notificationsTemp.unread.length));
+  //   }
+  // };
+
   useEffect(() => {
     socket.on('message received', (newMessageReceived) => {
       if (
@@ -131,8 +169,8 @@ const SingleChat = () => {
       ) {
         // notification
         if (!notification.unread.includes(newMessageReceived)) {
-          //   dispatch(setNotification([newMessageReceived, ...notification]));
-          //   setFetchAgain(!fetchAgain);
+          // dispatch(setNotifications([newMessageReceived, ...notification]));
+          setFetchAgain(!fetchAgain);
         }
       } else {
         setMessages([...messages, newMessageReceived]);
@@ -145,7 +183,7 @@ const SingleChat = () => {
       {selectedChat ? (
         <>
           <Typography
-            fontSize={{ sm: '28px', md: '30px' }}
+            fontSize={{ sm: '24px', md: '30px' }}
             pb={3}
             px={2}
             width={'100%'}
@@ -170,7 +208,11 @@ const SingleChat = () => {
               ) : (
                 <>
                   {selectedChat.chatName.toUpperCase()}
-                  <UpdateGroupChatModal fetchMessages={fetchMessages} />
+                  <UpdateGroupChatModal
+                    fetchAgain={fetchAgain}
+                    setFetchAgain={setFetchAgain}
+                    fetchMessages={fetchMessages}
+                  />
                 </>
               ))}
           </Typography>
@@ -179,10 +221,10 @@ const SingleChat = () => {
             flexDirection={'column'}
             justifyContent={'flex-end'}
             p={3}
-            bgcolor={'#E8E8E8'}
+            bgcolor={'#051926'}
             width={'100%'}
             height={'100%'}
-            borderRadius={'lg'}
+            borderRadius={'10px'}
             sx={{
               overflowY: 'hidden',
             }}
@@ -211,12 +253,15 @@ const SingleChat = () => {
                 <ScrollableChat messages={messages} />
               </div>
             )}
-            <FormControl onKeyDown={handleSendMessage} isRequired mt={3}>
+            <FormControl onKeyDown={handleSendMessage} mt={3}>
               {/* {isTyping ? <div>Loading...</div> : <></>} */}
               <Input
                 variant={'filled'}
                 sx={{
-                  background: '#E0E0E0',
+                  background: '#38b2ac',
+                  fontSize: '1.2rem',
+                  padding: '2px 5px',
+                  marginTop: '10px',
                 }}
                 placeholder='Enter a message...'
                 onChange={handleTyping}
@@ -232,7 +277,7 @@ const SingleChat = () => {
           justifyContent={'center'}
           height={'100%'}
         >
-          <Typography fontSize={'3xl'} pb={3}>
+          <Typography fontSize={'30px'} pb={3}>
             Click on a user to start chatting
           </Typography>
         </Box>

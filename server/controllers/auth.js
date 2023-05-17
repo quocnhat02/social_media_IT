@@ -52,9 +52,11 @@ export const login = async (req, res) => {
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
 
-    let userObj = user.toObject();
+    let userObj = await User.findById(user._id).select('-password');
+
+    // let userObj = user.toObject();
     // delete user['password'];
-    delete userObj['password'];
+    // delete userObj['password'];
 
     res.status(200).json({ token, user: userObj });
   } catch (error) {

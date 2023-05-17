@@ -21,17 +21,18 @@ const ScrollableChat = ({ messages }) => {
             {(isSameSender(messages, m, i, user._id) ||
               isLastMessage(messages, i, user._id)) && (
               <Tooltip
-                label={`${m.sender.firstName}${m.sender.firstName}`}
+                label={`${m.sender.firstName}${m.sender.lastName}`}
                 placement='bottom-start'
-                hasArrow
+                arrow
               >
                 <Avatar
                   mt={'7px'}
                   mr={1}
                   size={'sm'}
                   cursor={'pointer'}
-                  name={`${m.sender.firstName}${m.sender.firstName}`}
-                  src={m.sender.picturePath}
+                  name={`${m.sender.firstName}${m.sender.lastName}`}
+                  // src={m.sender.picturePath}
+                  src={`http://localhost:3001/assets/${user?.picturePath}`}
                 />
               </Tooltip>
             )}

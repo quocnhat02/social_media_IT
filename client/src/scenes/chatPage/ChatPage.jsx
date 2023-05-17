@@ -9,24 +9,32 @@ import MyChat from './chatComponent/MyChat';
 const ChatPage = () => {
   const user = useSelector((state) => state.user);
   const [fetchAgain, setFetchAgain] = useState(false);
-
+  console.log(user);
   return (
     <>
       <Navbar />
-      <div style={{ width: '100%', height: `calc(100vh -' 80px')` }}>
+      <div
+        style={{
+          width: '100%',
+          height: `calc(100vh -' 80px')`,
+        }}
+      >
         {user && <SideDrawer />}
         <Box
           display={'flex'}
           justifyContent={'space-between'}
           width={'100%'}
-          height={'86.5vh'}
+          height={'86.7vh'}
           p={'10px'}
           sx={{
-            background: '#525659',
+            background: '#051926',
+            fontSize: { sm: '15px', md: '12px', lg: '20px' },
           }}
         >
-          {user && <MyChat />}
-          {user && <ChatBox />}
+          {user && <MyChat fetchAgain={fetchAgain} />}
+          {user && (
+            <ChatBox fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
+          )}
         </Box>
       </div>
     </>

@@ -3,7 +3,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import SingleChat from './SingleChat';
 
-const ChatBox = () => {
+const ChatBox = ({ fetchAgain, setFetchAgain }) => {
   const selectedChat = useSelector((state) => state.selectedChat);
 
   return (
@@ -16,12 +16,12 @@ const ChatBox = () => {
       alignItems={'center'}
       flexDirection={'column'}
       p={3}
-      bgcolor={'white'}
-      width={{ sm: '100%', md: '68%' }}
-      borderRadius={'lg'}
+      bgcolor={'#38b2ac'}
+      width={{ sm: '100%', xs: '100%', md: '68%' }}
+      borderRadius={'12px'}
       border={'1px'}
     >
-      <SingleChat />
+      <SingleChat fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
     </Box>
   );
 };
