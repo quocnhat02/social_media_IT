@@ -7,7 +7,7 @@ import UserWidget from 'scenes/widgets/UserWidget';
 import MyPostWidget from 'scenes/widgets/MyPostWidget';
 import PostsWidget from 'scenes/widgets/PostsWidget';
 import FriendListWidget from 'scenes/widgets/FriendListWidget';
-import { setNotifications, setSocket, setUnreadCount } from 'state';
+import { setNotifications, setUnreadCount } from 'state';
 
 import { io } from 'socket.io-client';
 import { toast } from 'react-toastify';
@@ -18,7 +18,7 @@ const HomePage = () => {
   const { _id, picturePath } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
   const user = useSelector((state) => state.user);
-  const notification = useSelector((state) => state.notification);
+  // const notification = useSelector((state) => state.notification);
   const unreadCount = useSelector((state) => state.unreadCount);
   const dispatch = useDispatch();
 

@@ -3,6 +3,9 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPosts } from 'state';
 import PostWidget from './PostWidget';
+import { io } from 'socket.io-client';
+
+const socket = io('http://localhost:3001');
 
 const PostsWidget = ({ userId, isProfile = false }) => {
   const dispatch = useDispatch();
@@ -35,6 +38,10 @@ const PostsWidget = ({ userId, isProfile = false }) => {
   };
 
   useEffect(() => {
+    socket.on('new post', (post) => {
+      getPosts();
+    });
+
     if (isProfile) {
       setProfile(true);
       getUserPosts();
@@ -53,6 +60,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
               userId,
               firstName,
               lastName,
+              title,
               description,
               location,
               picturePath,
@@ -66,6 +74,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
                   postId={_id}
                   postUserId={userId}
                   name={`${firstName} ${lastName}`}
+                  title={title}
                   description={description}
                   location={location}
                   picturePath={picturePath}
@@ -81,6 +90,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
               userId,
               firstName,
               lastName,
+              title,
               description,
               location,
               picturePath,
@@ -93,6 +103,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
                 postId={_id}
                 postUserId={userId}
                 name={`${firstName} ${lastName}`}
+                title={title}
                 description={description}
                 location={location}
                 picturePath={picturePath}

@@ -6,21 +6,14 @@ import { toast } from 'react-toastify';
 
 import io from 'socket.io-client';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  Box,
-  FormControl,
-  IconButton,
-  Input,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Box, FormControl, IconButton, Input, Typography } from '@mui/material';
 import UpdateGroupChatModal from '../miscellaneous/UpdateGroupChatModal';
 import { getFullSender, getSender } from 'utils/ChatLogic';
 import ProfileModal from '../miscellaneous/ProfileModal';
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import CircularProgress from '@mui/material/CircularProgress';
 import ScrollableChat from './ScrollableChat';
-import { setNotifications, setSelectedChat, setUnreadCount } from 'state';
+import { setSelectedChat } from 'state';
 
 const ENDPOINT = 'http://localhost:3001';
 
@@ -169,7 +162,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         // notification
         if (!notification.unread.includes(newMessageReceived)) {
           // dispatch(setNotifications([newMessageReceived, ...notification]));
-          // setFetchAgain(!fetchAgain);
+          setFetchAgain(!fetchAgain);
         }
       } else {
         setMessages([...messages, newMessageReceived]);

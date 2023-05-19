@@ -35,7 +35,6 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
   const [search, setSearch] = useState('');
   const [searchResult, setSearchResult] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [renameLoading, setRenameLoading] = useState(false);
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => {
@@ -161,7 +160,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
       return;
     }
     try {
-      setRenameLoading(true);
+      setLoading(true);
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -178,7 +177,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
 
       dispatch(setSelectedChat(data));
       setFetchAgain(!fetchAgain);
-      setRenameLoading(false);
+      setLoading(false);
     } catch (error) {
       toast({
         title: 'Error occurred',
@@ -188,7 +187,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
         isClosable: true,
         position: 'top-right',
       });
-      setRenameLoading(false);
+      setLoading(false);
     }
     setGroupChatName('');
   };

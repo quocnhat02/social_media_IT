@@ -19,6 +19,7 @@ const PostWidget = ({
   postId,
   postUserId,
   name,
+  title,
   description,
   location,
   picturePath,
@@ -30,7 +31,7 @@ const PostWidget = ({
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
   const user = useSelector((state) => state.user);
-  const notifications = useSelector((state) => state.notifications);
+  // const notifications = useSelector((state) => state.notifications);
   const loggedInUserId = useSelector((state) => state.user._id);
   const isLiked = Boolean(likes[loggedInUserId]);
   const likeCount = Object.keys(likes).length;
@@ -38,35 +39,6 @@ const PostWidget = ({
   const { palette } = useTheme();
   const main = palette.neutral.main;
   const primary = palette.primary.main;
-
-  // const getAllNotifications = async () => {
-  //   const response = await fetch(
-  //     `http://localhost:3001/users/notifications/${user._id}`,
-  //     {
-  //       method: 'GET',
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //         'Content-Type': 'application/json',
-  //       },
-  //     }
-  //   );
-
-  //   const notificationsResponse = await response.json();
-
-  //   if (notificationsResponse.success) {
-  //     const notificationsTemp = {
-  //       read: notificationsResponse.notifications.filter(
-  //         (notification) => notification.read
-  //       ),
-
-  //       unread: notificationsResponse.notifications.filter(
-  //         (notification) => !notification.read
-  //       ),
-  //     };
-
-  //     return notificationsTemp;
-  //   }
-  // };
 
   const getAllNotifications = async () => {
     const response = await fetch(
@@ -112,18 +84,21 @@ const PostWidget = ({
           user: postUserId,
           title: `${user.firstName} ${user.lastName} ${
             isLiked ? 'unliked' : 'liked'
-          } your blog`,
+          } your blog has title: ${title}`,
           onClick: `/posts`,
         },
       }),
     });
 
-    socket.emit('newNotification', {
-      userId: postUserId,
-      title: `${user.firstName} ${user.lastName} ${
-        isLiked ? 'unliked' : 'liked'
-      } your blog`,
-    });
+    if (user._id !== postUserId) {
+      socket.emit('newNotification', {
+        userId: postUserId,
+        title: `${user.firstName} ${user.lastName} ${
+          isLiked ? 'unliked' : 'liked'
+        } your blog has title: ${title}`,
+      });
+    }
+    socket.emit('create post');
 
     const updatedPost = await response.json();
     dispatch(setPost({ post: updatedPost }));
@@ -141,6 +116,10 @@ const PostWidget = ({
         userPicturePath={userPicturePath}
       />
       <Typography color={main} sx={{ mt: '1rem' }}>
+        {title}
+      </Typography>
+      <br />
+      <Typography color={main} style={{ mt: '1rem' }}>
         {description}
       </Typography>
       {picturePath && (

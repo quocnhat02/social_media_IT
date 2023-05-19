@@ -67,6 +67,7 @@ app.use(errorHandler);
 
 const server = http.createServer(app);
 
+// SOCKET
 const io = new Server(server, {
   cors: {
     origin: 'http://localhost:3000',
@@ -79,6 +80,10 @@ io.on('connection', (socket) => {
     socket.join(userId);
   });
 
+  socket.on('create post', (data) => {
+    io.emit('new post', data);
+  });
+
   // listen for new notification
   socket.on('newNotification', (notification) => {
     socket.to(notification.userId).emit('newNotification', notification);
@@ -87,13 +92,11 @@ io.on('connection', (socket) => {
   // chat
   socket.on('setup', (userData) => {
     socket.join(userData._id);
-    console.log(userData._id);
     socket.emit('connected');
   });
 
   socket.on('join chat', (room) => {
     socket.join(room);
-    console.log('User Joined Room: ' + room);
   });
 
   socket.on('new message', (newMessageReceived) => {

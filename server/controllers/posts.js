@@ -5,13 +5,14 @@ import Notification from '../models/Notification.js';
 // CREATE
 export const createPost = async (req, res) => {
   try {
-    const { userId, description, picturePath } = req.body;
+    const { userId, title, description, picturePath } = req.body;
     const user = await User.findById(userId);
     const newPost = new Post({
       userId,
       firstName: user.firstName,
       lastName: user.lastName,
       location: user.location,
+      title,
       description,
       userPicturePath: user.picturePath,
       picturePath,
@@ -54,7 +55,7 @@ export const getUserPosts = async (req, res) => {
 export const likePost = async (req, res) => {
   try {
     const { id } = req.params;
-    const { userId } = req.body;
+    const { userId, notificationPayload } = req.body;
     const post = await Post.findById(id);
     const isLiked = post.likes.get(userId);
 
@@ -70,7 +71,8 @@ export const likePost = async (req, res) => {
       { new: true }
     );
 
-    if (userId !== post.userId) {
+    if (userId !== notificationPayload.user) {
+      // const foundNotification = await Notification.find({})
       const newNotification = new Notification(req.body.notificationPayload);
       await newNotification.save();
     }

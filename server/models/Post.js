@@ -3,7 +3,8 @@ import mongoose from 'mongoose';
 const postSchema = mongoose.Schema(
   {
     userId: {
-      type: String,
+      type: mongoose.Types.ObjectId,
+      ref: 'User',
       required: true,
     },
     firstName: {
@@ -15,6 +16,7 @@ const postSchema = mongoose.Schema(
       required: true,
     },
     location: String,
+    title: String,
     description: String,
     picturePath: String,
     userPicturePath: String,

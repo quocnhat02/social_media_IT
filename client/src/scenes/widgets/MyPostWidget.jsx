@@ -21,16 +21,20 @@ import FlexBetween from 'components/FlexBetween';
 import Dropzone from 'react-dropzone';
 import UserImage from 'components/UserImage';
 import WidgetWrapper from 'components/WidgetWrapper';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPosts } from 'state';
 
 import { toast } from 'react-toastify';
+import { io } from 'socket.io-client';
+
+const socket = io('http://localhost:3001');
 
 const MyPostWidget = ({ picturePath }) => {
   const dispatch = useDispatch();
   const [isImage, setIsImage] = useState(false);
   const [image, setImage] = useState(null);
+  const [title, setTitle] = useState('');
   const [post, setPost] = useState('');
   const { palette } = useTheme();
   const { _id } = useSelector((state) => state.user);
@@ -42,6 +46,7 @@ const MyPostWidget = ({ picturePath }) => {
   const handlePost = async () => {
     const formData = new FormData();
     formData.append('userId', _id);
+    formData.append('title', title);
     formData.append('description', post);
     // formData.append('userPicturePath', picturePath);
     if (image) {
@@ -57,6 +62,8 @@ const MyPostWidget = ({ picturePath }) => {
 
     const posts = await response.json();
     dispatch(setPosts({ posts }));
+    socket.emit('create post', title);
+
     toast.success('🦄 Create post successful!', {
       position: 'top-right',
       autoClose: 5000,
@@ -68,24 +75,50 @@ const MyPostWidget = ({ picturePath }) => {
       theme: 'light',
     });
     setImage(null);
+    setTitle('');
     setPost('');
   };
 
+  useEffect(() => {});
+
   return (
     <WidgetWrapper>
-      <FlexBetween gap='1.5rem'>
+      <FlexBetween gap='1.1rem'>
         <UserImage image={picturePath} />
-        <InputBase
-          placeholder='What do you think about today?'
-          onChange={(e) => setPost(e.target.value)}
-          value={post}
+        <Box
           sx={{
+            display: 'flex',
+            flexDirection: 'column',
             width: '100%',
-            backgroundColor: palette.neutral.light,
-            borderRadius: '2rem',
-            padding: '1rem 2rem',
           }}
-        />
+        >
+          <InputBase
+            placeholder='Title...'
+            onChange={(e) => setTitle(e.target.value)}
+            value={title}
+            sx={{
+              width: '100%',
+              backgroundColor: palette.neutral.light,
+              borderRadius: '2rem',
+              padding: '1rem 2rem',
+            }}
+          />
+          <InputBase
+            placeholder='Description...'
+            onChange={(e) => setPost(e.target.value)}
+            value={post}
+            multiline
+            rows={3}
+            sx={{
+              width: '100%',
+              backgroundColor: palette.neutral.light,
+              borderRadius: '2rem',
+              padding: '1rem 2rem',
+              wordWrap: 'break-word',
+              overflowY: 'hidden',
+            }}
+          />
+        </Box>
       </FlexBetween>
       {isImage && (
         <Box
@@ -172,7 +205,7 @@ const MyPostWidget = ({ picturePath }) => {
           disabled={!post}
           onClick={handlePost}
           sx={{
-            color: palette.background.alt,
+            color: palette.background.main,
             backgroundColor: palette.primary.main,
             borderRadius: '3rem',
           }}
