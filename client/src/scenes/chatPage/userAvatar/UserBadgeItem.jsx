@@ -13,7 +13,7 @@ const UserBadgeItem = ({ user, handleFunction }) => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        gap: '2px',
+        gap: '3px',
         fontSize: {
           sm: '10px',
           xs: '8px',

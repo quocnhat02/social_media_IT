@@ -4,6 +4,10 @@ export const getSender = (loggedUser, users) => {
     : `${users[0]?.firstName} ${users[0]?.lastName}`;
 };
 
+export const getReceiver = (loggedUser, users) => {
+  return users[0]._id !== loggedUser._id ? users[0] : users[1];
+};
+
 export const getFullSender = (loggedUser, users) => {
   return users[0]._id === loggedUser._id ? users[1] : users[0];
 };
@@ -11,7 +15,7 @@ export const getFullSender = (loggedUser, users) => {
 export const isSameSender = (messages, m, i, userId) => {
   return (
     i < messages.length - 1 &&
-    (messages[i + 1].sender._id === m.sender._id ||
+    (messages[i + 1].sender._id !== m.sender._id ||
       messages[i + 1].sender._id === undefined) &&
     messages[i].sender._id !== userId
   );

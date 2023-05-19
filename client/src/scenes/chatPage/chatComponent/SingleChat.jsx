@@ -86,11 +86,10 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
           {
             content: newMessage,
             chatId: selectedChat._id,
+            userId: user._id,
             // notificationPayload: {
             //   user: selectedChat,
-            //   title: `${user.firstName} ${user.lastName} ${
-            //     isLiked ? 'unliked' : 'liked'
-            //   } your blog`,
+            //   title: `${user.firstName} ${user.lastName} send your message`,
             //   onClick: `/posts`,
             // },
           },
@@ -170,7 +169,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         // notification
         if (!notification.unread.includes(newMessageReceived)) {
           // dispatch(setNotifications([newMessageReceived, ...notification]));
-          setFetchAgain(!fetchAgain);
+          // setFetchAgain(!fetchAgain);
         }
       } else {
         setMessages([...messages, newMessageReceived]);
@@ -263,8 +262,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 sx={{
                   background: '#38b2ac',
                   fontSize: '1.2rem',
-                  padding: '2px 5px',
+                  padding: '2px 10px',
                   marginTop: '10px',
+                  borderRadius: '5px',
                 }}
                 placeholder='Enter a message...'
                 onChange={handleTyping}

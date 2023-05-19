@@ -23,11 +23,11 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 500,
-  bgcolor: '#A459D1',
+  width: 600,
+  backgroundColor: '#865DFF',
   border: '2px solid #000',
   boxShadow: 24,
-  p: 4,
+  padding: 4,
 };
 
 const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
@@ -250,6 +250,9 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
             display={'flex'}
             fontSize={'35px'}
             justifyContent={'center'}
+            sx={{
+              marginBottom: 2,
+            }}
           >
             {selectedChat.chatName}
           </Typography>
@@ -308,10 +311,11 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
               <Button
                 variant={'solid'}
                 sx={{
-                  background: '#159895',
+                  background: '#362FD9',
                   marginTop: 1,
                   marginBottom: 1,
                   flexDirection: 'row-reverse',
+                  color: 'white',
                 }}
                 color={'white'}
                 onClick={handleRename}
@@ -342,7 +346,8 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
           >
             <Button
               sx={{
-                background: '#FE6244',
+                background: '#F2921D',
+                color: 'white',
               }}
               onClick={() => handleRemove(user)}
             >

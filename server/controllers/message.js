@@ -34,6 +34,11 @@ export const sendMessage = asyncHandler(async (req, res) => {
       latestMessage: message,
     });
 
+    // if (userId !== post.userId) {
+    //   const newNotification = new Notification(req.body.notificationPayload);
+    //   await newNotification.save();
+    // }
+
     res.json(message);
   } catch (error) {
     res.status(400);
