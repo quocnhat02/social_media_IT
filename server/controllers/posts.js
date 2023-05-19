@@ -71,8 +71,7 @@ export const likePost = async (req, res) => {
       { new: true }
     );
 
-    if (userId !== notificationPayload.user) {
-      // const foundNotification = await Notification.find({})
+    if (userId !== notificationPayload?.user) {
       const newNotification = new Notification(req.body.notificationPayload);
       await newNotification.save();
     }
