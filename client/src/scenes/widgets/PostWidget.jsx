@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setNotifications, setPost, setUnreadCount } from 'state';
 
 import { io } from 'socket.io-client';
+import { useNavigate } from 'react-router-dom';
 const socket = io('http://localhost:3001');
 
 const PostWidget = ({
@@ -27,14 +28,15 @@ const PostWidget = ({
   likes,
   comments,
 }) => {
-  const [isComments, setIsComments] = useState(false);
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
   const user = useSelector((state) => state.user);
-  //  const notifications = useSelector((state) => state.notifications);
+  const notifications = useSelector((state) => state.notifications);
   const loggedInUserId = useSelector((state) => state.user._id);
   const isLiked = Boolean(likes[loggedInUserId]);
   const likeCount = Object.keys(likes).length;
+
+  const navigate = useNavigate();
 
   const { palette } = useTheme();
   const main = palette.neutral.main;
@@ -85,7 +87,7 @@ const PostWidget = ({
           title: `${user.firstName} ${user.lastName} ${
             isLiked ? 'unliked' : 'liked'
           } your blog has title: ${title}`,
-          onClick: `/posts`,
+          onClick: `/posts/${postId}`,
         },
       }),
     });
@@ -96,6 +98,7 @@ const PostWidget = ({
         title: `${user.firstName} ${user.lastName} ${
           isLiked ? 'unliked' : 'liked'
         } your blog has title: ${title}`,
+        onClick: `/posts/${postId}`,
       });
     }
     socket.emit('create post');
@@ -145,7 +148,7 @@ const PostWidget = ({
           </FlexBetween>
 
           <FlexBetween gap='0.3rem'>
-            <IconButton onClick={() => setIsComments(!isComments)}>
+            <IconButton onClick={() => navigate(`/posts/${postId}`)}>
               <ChatBubbleOutlineOutlined />
             </IconButton>
             <Typography>{comments.length}</Typography>
@@ -156,7 +159,7 @@ const PostWidget = ({
           <ShareOutlined />
         </IconButton>
       </FlexBetween>
-      {isComments && (
+      {/* {isComments && (
         <Box mt='0.5rem'>
           {comments.map((comment, i) => (
             <Box key={`${name}-${i}`}>
@@ -168,7 +171,7 @@ const PostWidget = ({
           ))}
           <Divider />
         </Box>
-      )}
+      )} */}
     </WidgetWrapper>
   );
 };

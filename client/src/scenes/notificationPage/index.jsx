@@ -4,7 +4,7 @@ import { Box, Divider, Typography } from '@mui/material';
 import Navbar from 'scenes/navbar';
 import { useSelector } from 'react-redux';
 import TabsNotification from 'components/TabsNotification';
-import moment from 'moment/moment';
+import moment from 'moment';
 import Notification from './Notification';
 
 const NotificationPage = () => {

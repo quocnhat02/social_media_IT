@@ -12,6 +12,7 @@ import { themeSettings } from 'theme';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ChatPage from 'scenes/chatPage/ChatPage';
+import PostDetail from 'scenes/postPage';
 
 function App() {
   const mode = useSelector((state) => state.mode);
@@ -37,6 +38,10 @@ function App() {
             <Route
               path='/chat'
               element={isAuth ? <ChatPage /> : <Navigate to='/' />}
+            />
+            <Route
+              path='/posts/:postId'
+              element={isAuth ? <PostDetail /> : <Navigate to='/' />}
             />
             <Route
               path='/profile/:userId'

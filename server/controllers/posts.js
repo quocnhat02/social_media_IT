@@ -51,6 +51,17 @@ export const getUserPosts = async (req, res) => {
   }
 };
 
+export const getDetailPost = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const post = await Post.findById(postId);
+
+    res.status(200).json(post);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
+
 // UPDATE
 export const likePost = async (req, res) => {
   try {
@@ -65,18 +76,33 @@ export const likePost = async (req, res) => {
       post.likes.set(userId, true);
     }
 
-    const updatedPost = await Post.findByIdAndUpdate(
+    const updatedPostNew = await Post.findByIdAndUpdate(
       id,
       { likes: post.likes },
       { new: true }
     );
 
+    // if (userId !== notificationPayload?.user) {
+    //   const newNotification = new Notification(req.body.notificationPayload);
+    //   await newNotification.save();
+    // }
+
+    // const found = await Notification.findOne({
+    //   user: notificationPayload.user,
+    //   title: notificationPayload.title,
+    //   onClick: notificationPayload.onClick,
+    //   read: false,
+    // });
+
+    // if (!found) {
+    //   console.log(found);
+    // }
+
     if (userId !== notificationPayload?.user) {
-      const newNotification = new Notification(req.body.notificationPayload);
+      const newNotification = new Notification(notificationPayload);
       await newNotification.save();
     }
-
-    res.status(200).json(updatedPost);
+    return res.status(200).json(updatedPostNew);
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
