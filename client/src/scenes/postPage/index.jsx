@@ -22,6 +22,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Navbar from 'scenes/navbar';
+import FriendListWidget from 'scenes/widgets/FriendListWidget';
+import UserWidget from 'scenes/widgets/UserWidget';
 import { io } from 'socket.io-client';
 import { setNotifications, setPost, setUnreadCount } from 'state';
 
@@ -157,96 +159,96 @@ const PostDetail = () => {
   }, []);
 
   return (
-    <WidgetWrapper m='2rem 0'>
-      <Friend
-        friendId={blog?.userId}
-        name={`${blog?.firstName} ${blog?.lastName}`}
-        subtitle={blog?.location}
-        userPicturePath={blog?.picturePath}
-      />
-      <Typography color={main} sx={{ mt: '1rem' }}>
-        {blog?.title}
-      </Typography>
-      <br />
-      <Typography color={main} style={{ mt: '1rem' }}>
-        {blog?.description}
-      </Typography>
-      {blog?.picturePath && (
-        <img
-          width='100%'
-          height='auto'
-          alt='post'
-          style={{ borderRadius: '0.75rem', marginTop: '0.75rem' }}
-          src={`http://localhost:3001/assets/${blog?.picturePath}`}
-        />
-      )}
-      <FlexBetween mt='0.25rem'>
-        <FlexBetween gap='1rem'>
-          <FlexBetween gap='0.3rem'>
-            <IconButton onClick={patchLike}>
-              {isLiked ? (
-                <FavoriteOutlined sx={{ color: primary }} />
-              ) : (
-                <FavoriteBorderOutlined />
-              )}
-            </IconButton>
-            <Typography>{likeCount}</Typography>
-          </FlexBetween>
-
-          <FlexBetween gap='0.3rem'>
-            <IconButton onClick={() => setIsComments(!isComments)}>
-              <ChatBubbleOutlineOutlined />
-            </IconButton>
-            <Typography>{blog?.comments?.length}</Typography>
-          </FlexBetween>
-        </FlexBetween>
-
-        <IconButton>
-          <ShareOutlined />
-        </IconButton>
-      </FlexBetween>
-      <InputBase placeholder='Enter a comment' />
-      {isComments && (
-        <Box mt='0.5rem'>
-          {blog?.comments.map((comment, i) => (
-            <Box key={`${`${blog?.firstName}${blog?.lastName}`}-${i}`}>
-              <Divider />
-              <Typography sx={{ color: main, m: '0.5rem 0', pl: '1rem' }}>
-                {comment}
-              </Typography>
-            </Box>
-          ))}
-          <Divider />
+    <Box>
+      <Navbar />
+      <Box
+        width='100%'
+        padding='2rem 6%'
+        display={isNonMobileScreens ? 'flex' : 'block'}
+        gap='2rem'
+        justifyContent='center'
+      >
+        <Box flexBasis={isNonMobileScreens ? '26%' : undefined}>
+          <UserWidget userId={_id} picturePath={user.picturePath} />
+          <Box m='2rem 0' />
+          <FriendListWidget userId={_id} />
         </Box>
-      )}
-    </WidgetWrapper>
+        <Box
+          flexBasis={isNonMobileScreens ? '52%' : undefined}
+          mt={isNonMobileScreens ? undefined : '2rem'}
+        >
+          <WidgetWrapper>
+            <Friend
+              friendId={blog?.userId}
+              name={`${blog?.firstName} ${blog?.lastName}`}
+              subtitle={blog?.location}
+              userPicturePath={blog?.picturePath}
+            />
+            <Typography color={main} sx={{ mt: '1rem' }}>
+              {blog?.title}
+            </Typography>
+            <br />
+            <Typography color={main} style={{ mt: '1rem' }}>
+              {blog?.description}
+            </Typography>
+            {blog?.picturePath && (
+              <img
+                width='100%'
+                height='auto'
+                alt='post'
+                style={{ borderRadius: '0.75rem', marginTop: '0.75rem' }}
+                src={`http://localhost:3001/assets/${blog?.picturePath}`}
+              />
+            )}
+            <FlexBetween mt='0.25rem'>
+              <FlexBetween gap='1rem'>
+                <FlexBetween gap='0.3rem'>
+                  <IconButton onClick={patchLike}>
+                    {isLiked ? (
+                      <FavoriteOutlined sx={{ color: primary }} />
+                    ) : (
+                      <FavoriteBorderOutlined />
+                    )}
+                  </IconButton>
+                  <Typography>{likeCount}</Typography>
+                </FlexBetween>
 
-    // <Box>
-    //   <Navbar />
-    //   <Box
-    //     width='100%'
-    //     padding='2rem 6%'
-    //     display={isNonMobileScreens ? 'flex' : 'block'}
-    //     gap='0.5rem'
-    //     justifyContent='space-between'
-    //   >
-    //     <Box flexBasis={isNonMobileScreens ? '26%' : undefined}>
-    //       <UserWidget userId={_id} picturePath={picturePath} />
-    //     </Box>
-    //     <Box
-    //       flexBasis={isNonMobileScreens ? '42%' : undefined}
-    //       mt={isNonMobileScreens ? undefined : '2rem'}
-    //     >
-    //       <MyPostWidget picturePath={picturePath} />
-    //       <PostsWidget userId={_id} />
-    //     </Box>
-    //     {isNonMobileScreens && (
-    //       <Box flexBasis='26%'>
-    //         <FriendListWidget userId={_id} />
-    //       </Box>
-    //     )}
-    //   </Box>
-    // </Box>
+                <FlexBetween gap='0.3rem'>
+                  <IconButton onClick={() => setIsComments(!isComments)}>
+                    <ChatBubbleOutlineOutlined />
+                  </IconButton>
+                  <Typography>{blog?.comments?.length}</Typography>
+                </FlexBetween>
+              </FlexBetween>
+
+              <IconButton>
+                <ShareOutlined />
+              </IconButton>
+            </FlexBetween>
+            <InputBase
+              placeholder='Enter a comment'
+              sx={{
+                fontSize: '1.1rem',
+                marginTop: '0.5rem',
+              }}
+            />
+            {isComments && (
+              <Box mt='0.7rem'>
+                {blog?.comments.map((comment, i) => (
+                  <Box key={`${`${blog?.firstName}${blog?.lastName}`}-${i}`}>
+                    <Divider />
+                    <Typography sx={{ color: main, m: '0.5rem 0', pl: '1rem' }}>
+                      {comment}
+                    </Typography>
+                  </Box>
+                ))}
+                <Divider />
+              </Box>
+            )}
+          </WidgetWrapper>
+        </Box>
+      </Box>
+    </Box>
   );
 };
 

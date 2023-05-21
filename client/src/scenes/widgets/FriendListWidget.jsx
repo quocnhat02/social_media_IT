@@ -34,11 +34,16 @@ const FriendListWidget = ({ userId }) => {
         color={palette.neutral.dark}
         variant='h5'
         fontWeight='500'
-        sx={{ mb: '1.5rem' }}
+        sx={{ marginBottom: '1.5rem' }}
       >
         Friend List
       </Typography>
-      <Box display='flex' flexDirection='column' gap='1.5rem'>
+      <Box
+        display='flex'
+        flexDirection='column'
+        gap='1.5rem'
+        sx={{ paddingBottom: '0.7rem' }}
+      >
         {friends.map((friend, index) => (
           <Friend
             key={`${friend._id}-${index}`}
