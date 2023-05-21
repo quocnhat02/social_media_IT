@@ -35,6 +35,7 @@ const PostDetail = () => {
   const token = useSelector((state) => state.token);
   const user = useSelector((state) => state.user);
   const loggedInUserId = useSelector((state) => state.user._id);
+  const [fetchAgain, setFetchAgain] = useState(false);
 
   const isLiked = blog?.likes[loggedInUserId]
     ? Boolean(blog?.likes[loggedInUserId])
@@ -113,6 +114,7 @@ const PostDetail = () => {
     const updatedPost = await response.json();
     dispatch(setPost({ post: updatedPost }));
     getAllNotifications();
+    setBlog(updatedPost);
     // const updatedNotification = await getAllNotifications();
     // dispatch(setNotifications({ ...notifications, updatedNotification }));
   };
@@ -146,6 +148,7 @@ const PostDetail = () => {
         theme: 'light',
       });
       dispatch(setUnreadCount(unreadCount + 1));
+      setFetchAgain(!fetchAgain);
     });
   }, [user]);
 
