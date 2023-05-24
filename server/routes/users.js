@@ -5,6 +5,10 @@ import {
   addRemoveFriend,
   getNotifications,
   getAllUsers,
+  sendAutomatedEmail,
+  forgotPassword,
+  resetPassword,
+  changePassword,
 } from '../controllers/users.js';
 import { verifyToken } from '../middlewares/auth.js';
 
@@ -17,6 +21,16 @@ router.get('/notifications/:userId', verifyToken, getNotifications);
 
 // SEARCH CHAT
 router.get('/', verifyToken, getAllUsers);
+
+// SEND EMAIL
+router.post('/sendAutomatedEmail', verifyToken, sendAutomatedEmail);
+
+// FORGOT PASSWORD
+router.post('/forgotPassword', forgotPassword);
+router.patch('/resetPassword/:resetToken', resetPassword);
+
+// CHANGE PASSWORD
+router.patch('/changePassword', verifyToken, changePassword);
 
 // UPDATE
 router.patch('/:id/:friendId', verifyToken, addRemoveFriend);

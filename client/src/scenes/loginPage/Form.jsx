@@ -6,8 +6,12 @@ import {
   useMediaQuery,
   Typography,
   useTheme,
+  InputAdornment,
+  IconButton,
+  Modal,
 } from '@mui/material';
 
+import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import { Formik } from 'formik';
 import * as yup from 'yup';
@@ -19,6 +23,7 @@ import FlexBetween from 'components/FlexBetween';
 import { toast } from 'react-toastify';
 
 import { io } from 'socket.io-client';
+import { RemoveRedEyeOutlined } from '@mui/icons-material';
 const socket = io('http://localhost:3001');
 
 const registerSchema = yup.object().shape({
@@ -51,6 +56,24 @@ const initialValueLogin = {
   password: '',
 };
 
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  height: 300,
+  bgcolor: '#27374D',
+  border: '2px solid #000',
+  boxShadow: 24,
+  paddingTop: 5,
+  paddingX: 2,
+  paddingBottom: 3,
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-arrow',
+};
+
 const Form = () => {
   const [pageType, setPageType] = useState('login');
   const { palette } = useTheme();
@@ -59,6 +82,21 @@ const Form = () => {
   const isNonMobile = useMediaQuery('(min-width: 600px)');
   const isLogin = pageType === 'login';
   const isRegister = pageType === 'register';
+  const [showPassword, setShowPassword] = useState(false);
+  const [emailForgot, setEmailForgot] = useState();
+
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+    setEmailForgot('');
+  };
+
+  const togglePassword = () => {
+    setShowPassword(!showPassword);
+  };
 
   const register = async (values, onSubmitProps) => {
     const formData = new FormData();
@@ -153,6 +191,21 @@ const Form = () => {
         theme: 'light',
       });
     }
+  };
+
+  const forgot = async (e) => {
+    e.preventDefault();
+
+    if (!emailForgot) {
+      return toast.error('Please enter an email');
+    }
+
+    const userData = {
+      emailForgot,
+    };
+
+    setEmailForgot('');
+    handleClose();
   };
 
   const handleFormSubmit = async (values, onSubmitProps) => {
@@ -281,7 +334,7 @@ const Form = () => {
             />
             <TextField
               label='Password'
-              type='password'
+              type={showPassword ? 'text' : 'password'}
               onBlur={handleBlur}
               onChange={handleChange}
               value={values.password}
@@ -289,6 +342,21 @@ const Form = () => {
               error={Boolean(touched.password) && Boolean(errors.password)}
               helperText={touched.password && errors.password}
               sx={{ gridColumn: 'span 4' }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position='end'>
+                    {showPassword ? (
+                      <IconButton onClick={() => togglePassword()}>
+                        <VisibilityOffOutlinedIcon />
+                      </IconButton>
+                    ) : (
+                      <IconButton onClick={() => togglePassword()}>
+                        <RemoveRedEyeOutlined />
+                      </IconButton>
+                    )}
+                  </InputAdornment>
+                ),
+              }}
             />
           </Box>
 
@@ -309,6 +377,67 @@ const Form = () => {
             >
               {isLogin ? 'LOGIN' : 'REGISTER'}
             </Button>
+            {isLogin && (
+              <Typography
+                sx={{
+                  textDecoration: 'underline',
+                  color: palette.primary.main,
+                  '&:hover': {
+                    cursor: 'pointer',
+                    color: '#F45050',
+                  },
+                  marginBottom: '0.7rem',
+                }}
+                onClick={handleOpen}
+              >
+                Forgot password
+              </Typography>
+            )}
+            <Modal
+              open={open}
+              onClose={handleClose}
+              aria-labelledby='child-modal-title'
+              aria-describedby='child-modal-description'
+            >
+              <Box sx={{ ...style, width: 400 }}>
+                <form onSubmit={forgot}>
+                  <Typography
+                    variant='h2'
+                    id='child-modal-title'
+                    marginBottom={5}
+                    color='#FFD95A'
+                    textAlign={'center'}
+                  >
+                    Forgot Password
+                  </Typography>
+
+                  <TextField
+                    label='Email Forgot'
+                    onBlur={handleBlur}
+                    onChange={(e) => setEmailForgot(e.target.value)}
+                    value={emailForgot}
+                    name='emailForgot'
+                    sx={{ gridColumn: 'span 4', width: '100%' }}
+                  />
+                  <Button
+                    fullWidth
+                    type='submit'
+                    sx={{
+                      margin: '2rem 0',
+                      padding: '1rem',
+                      width: '100%',
+                      backgroundColor: palette.primary.main,
+                      color: palette.background.alt,
+                      '&:hover': {
+                        color: palette.primary.main,
+                      },
+                    }}
+                  >
+                    Send Email
+                  </Button>
+                </form>
+              </Box>
+            </Modal>
             <Typography
               onClick={() => {
                 setPageType(isLogin ? 'register' : 'login');
@@ -319,7 +448,7 @@ const Form = () => {
                 color: palette.primary.main,
                 '&:hover': {
                   cursor: 'pointer',
-                  color: palette.primary.light,
+                  color: '#F97B22',
                 },
               }}
             >

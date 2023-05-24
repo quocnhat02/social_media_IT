@@ -1,7 +1,10 @@
 import User from '../models/User.js';
 import Notification from '../models/Notification.js';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 
 import asyncHandler from 'express-async-handler';
+import sendEmail from '../utils/sendEmail.js';
 
 // READ
 export const getUser = async (req, res) => {
@@ -102,4 +105,140 @@ export const getAllUsers = asyncHandler(async (req, res) => {
   });
 
   res.send(users);
+});
+
+export const sendAutomatedEmail = asyncHandler(async (req, res) => {
+  const { subject, send_to, reply_to, template, url } = req.body;
+
+  if (!subject || !send_to || !reply_to || !template) {
+    res.status(500);
+    throw new Error('Missing email parameter');
+  }
+
+  // Get user
+  const user = await User.findOne({ email: send_to });
+
+  if (!user) {
+    res.status(404);
+    throw new Error('User not found');
+  }
+
+  const send_from = process.env.EMAIL_USER;
+  const name = `${user.lastName} ${user.firstName}`;
+  const link = `${process.env.FRONTEND_URL}/${url}`;
+
+  try {
+    await sendEmail(
+      subject,
+      send_to,
+      send_from,
+      reply_to,
+      template,
+      name,
+      link
+    );
+
+    res.status(200).json({ message: 'Email sent' });
+  } catch (error) {
+    res.status(500);
+    throw new Error('Email not send, please try again');
+  }
+});
+
+// FORGOT PASSWORD
+export const forgotPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    res.status(404);
+    throw new Error('No user with this email');
+  }
+
+  const resetToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+
+  const resetUrl = `${process.env.FRONTEND_URL}/resetPassword/${user._id}`;
+
+  // Send Email
+  const subject = 'Password Reset Request - SOCIAL-MEDIA-IT';
+  const send_to = user.email;
+  const sent_from = process.env.EMAIL_USER;
+  const reply_to = 'noreply@nhat.com';
+  const template = 'forgotPassword';
+  const name = `${user.lastName} ${user.firstName}`;
+  const link = resetUrl;
+
+  try {
+    await sendEmail(
+      subject,
+      send_to,
+      sent_from,
+      reply_to,
+      template,
+      name,
+      link
+    );
+    res.status(200).json({ message: 'Password Reset Email Sent' });
+  } catch (error) {
+    res.status(500);
+    throw new Error('Email not sent, please try again');
+  }
+});
+
+// RESET PASSWORD
+export const resetPassword = asyncHandler(async (req, res) => {
+  const { resetToken } = req.params;
+  const { password } = req.body;
+
+  const user = await User.findById(resetToken);
+
+  if (!user) {
+    res.status(404);
+    throw new Error('User not found');
+  }
+
+  const salt = await bcrypt.genSalt();
+  const passwordHash = await bcrypt.hash(password, salt);
+
+  user.password = passwordHash;
+  await user.save();
+
+  res.status(200).json({ message: 'Password reset successful' });
+});
+
+// CHANGE PASSWORD
+export const changePassword = asyncHandler(async (req, res) => {
+  const { oldPassword, password } = req.body;
+
+  const user = await User.findById(req.user._id);
+
+  if (!user) {
+    res.status(404);
+    throw new Error('User not found');
+  }
+
+  if (!oldPassword || !password) {
+    res.status(400);
+    throw new Error('Please enter old and new password');
+  }
+
+  // Check if old password is correct
+  const isMatch = await bcrypt.compare(oldPassword, user.password);
+
+  // Save new password
+  if (user && isMatch) {
+    const salt = await bcrypt.genSalt();
+    const passwordHash = await bcrypt.hash(password, salt);
+
+    user.password = passwordHash;
+    await user.save();
+
+    res.status(200).json({
+      message: 'Password change successful, please re-login',
+    });
+  } else {
+    res.status(400);
+    throw new Error('Old password is incorrect');
+  }
 });

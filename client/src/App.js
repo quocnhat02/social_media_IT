@@ -13,6 +13,8 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ChatPage from 'scenes/chatPage/ChatPage';
 import PostDetail from 'scenes/postPage';
+import ResetPassword from 'scenes/loginPage/ResetPassword';
+import LoginWithCode from 'scenes/loginPage/LoginWithCode';
 
 function App() {
   const mode = useSelector((state) => state.mode);
@@ -31,6 +33,13 @@ function App() {
               path='/home'
               element={isAuth ? <HomePage /> : <Navigate to='/' />}
             />
+            <Route
+              path='/resetPassword/:resetToken'
+              element={<ResetPassword />}
+            />
+            <Route path='/loginWithCode/:email' element={<LoginWithCode />} />
+            {/* <Route path='/verify/:verificationToken' element={<Verify />} /> */}
+
             <Route
               path='/notifications'
               element={isAuth ? <NotificationPage /> : <Navigate to='/' />}
