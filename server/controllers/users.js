@@ -115,16 +115,20 @@ export const sendAutomatedEmail = asyncHandler(async (req, res) => {
   const { subject, send_to, reply_to, template, url } = req.body;
 
   if (!subject || !send_to || !reply_to || !template) {
-    res.status(500);
-    throw new Error('Missing email parameter');
+    return res.status(500).json({
+      success: false,
+      message: 'Missing email parameter',
+    });
   }
 
   // Get user
   const user = await User.findOne({ email: send_to });
 
   if (!user) {
-    res.status(404);
-    throw new Error('User not found');
+    return res.status(404).json({
+      success: false,
+      message: 'User not found',
+    });
   }
 
   const send_from = process.env.EMAIL_USER;
@@ -142,10 +146,15 @@ export const sendAutomatedEmail = asyncHandler(async (req, res) => {
       link
     );
 
-    res.status(200).json({ message: 'Email sent' });
+    return res.status(200).json({
+      success: true,
+      message: 'Email sent',
+    });
   } catch (error) {
-    res.status(500);
-    throw new Error('Email not send, please try again');
+    return res.status(500).json({
+      success: false,
+      message: 'Email not sent, please try again',
+    });
   }
 });
 
@@ -156,11 +165,13 @@ export const forgotPassword = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email });
 
   if (!user) {
-    res.status(404);
-    throw new Error('No user with this email');
+    return res.status(404).json({
+      success: false,
+      message: 'No user with this email',
+    });
   }
 
-  const resetToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+  //const resetToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
 
   const resetUrl = `${process.env.FRONTEND_URL}/resetPassword/${user._id}`;
 
@@ -183,10 +194,15 @@ export const forgotPassword = asyncHandler(async (req, res) => {
       name,
       link
     );
-    res.status(200).json({ message: 'Password Reset Email Sent' });
+    return res.status(200).json({
+      success: true,
+      message: 'Password Reset Email Sent',
+    });
   } catch (error) {
-    res.status(500);
-    throw new Error('Email not sent, please try again');
+    return res.status(500).json({
+      success: false,
+      message: 'Email not sent, please try again',
+    });
   }
 });
 
@@ -198,8 +214,10 @@ export const resetPassword = asyncHandler(async (req, res) => {
   const user = await User.findById(resetToken);
 
   if (!user) {
-    res.status(404);
-    throw new Error('User not found');
+    return res.status(404).json({
+      success: false,
+      message: 'User not found',
+    });
   }
 
   const salt = await bcrypt.genSalt();
@@ -208,7 +226,10 @@ export const resetPassword = asyncHandler(async (req, res) => {
   user.password = passwordHash;
   await user.save();
 
-  res.status(200).json({ message: 'Password reset successful' });
+  return res.status(200).json({
+    success: true,
+    message: 'Password reset successful',
+  });
 });
 
 // CHANGE PASSWORD

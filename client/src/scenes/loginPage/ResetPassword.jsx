@@ -11,6 +11,8 @@ import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined
 import { RemoveRedEyeOutlined } from '@mui/icons-material';
 import { useTheme } from '@emotion/react';
 import { Button } from 'react-chat-engine-advanced';
+import { toast } from 'react-toastify';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const initialState = {
   password: '',
@@ -19,6 +21,8 @@ const initialState = {
 
 const ResetPassword = () => {
   const { palette } = useTheme();
+  const navigate = useNavigate();
+  const { resetToken } = useParams();
 
   const [formData, setFormData] = useState(initialState);
   const { password, passwordConfirm } = formData;
@@ -32,6 +36,65 @@ const ResetPassword = () => {
 
   const togglePasswordConfirm = () => {
     setShowPasswordConfirm(!showPasswordConfirm);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+
+    if (!password || !passwordConfirm) {
+      return toast.error('All fields are required');
+    }
+
+    if (password !== passwordConfirm) {
+      return toast.error('Passwords do not match');
+    }
+
+    const userData = {
+      password,
+    };
+
+    const response = await fetch(
+      `http://127.0.0.1:3001/users/resetPassword/${resetToken}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      }
+    );
+
+    const { success, message } = await response.json();
+    if (success) {
+      navigate('/');
+
+      return toast.success(`🦄 ${message}`, {
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'light',
+      });
+    } else {
+      return toast.error(`🦄 ${message}`, {
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'light',
+      });
+    }
   };
 
   return (
@@ -63,67 +126,72 @@ const ResetPassword = () => {
       >
         Reset Password
       </Typography>
-      <TextField
-        label='Password'
-        type={showPassword ? 'text' : 'password'}
-        value={password}
-        name='password'
-        sx={{ gridColumn: 'span 4', marginBottom: '1rem' }}
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position='end'>
-              {showPassword ? (
-                <IconButton onClick={() => togglePassword()}>
-                  <VisibilityOffOutlinedIcon />
-                </IconButton>
-              ) : (
-                <IconButton onClick={() => togglePassword()}>
-                  <RemoveRedEyeOutlined />
-                </IconButton>
-              )}
-            </InputAdornment>
-          ),
-        }}
-      />
+      <form onSubmit={handleResetPassword}>
+        <TextField
+          onChange={handleInputChange}
+          label='Password'
+          type={showPassword ? 'text' : 'password'}
+          value={password}
+          name='password'
+          sx={{ gridColumn: 'span 4', marginBottom: '1rem', width: '100%' }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position='end'>
+                {showPassword ? (
+                  <IconButton onClick={() => togglePassword()}>
+                    <VisibilityOffOutlinedIcon />
+                  </IconButton>
+                ) : (
+                  <IconButton onClick={() => togglePassword()}>
+                    <RemoveRedEyeOutlined />
+                  </IconButton>
+                )}
+              </InputAdornment>
+            ),
+          }}
+        />
 
-      <TextField
-        label='Password Confirm'
-        type={showPasswordConfirm ? 'text' : 'password'}
-        value={passwordConfirm}
-        name='passwordConfirm'
-        sx={{ gridColumn: 'span 4', marginBottom: '1rem' }}
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position='end'>
-              {showPasswordConfirm ? (
-                <IconButton onClick={() => togglePasswordConfirm()}>
-                  <VisibilityOffOutlinedIcon />
-                </IconButton>
-              ) : (
-                <IconButton onClick={() => togglePasswordConfirm()}>
-                  <RemoveRedEyeOutlined />
-                </IconButton>
-              )}
-            </InputAdornment>
-          ),
-        }}
-      />
-      <Button
-        fullWidth
-        style={{
-          margin: '10px 0',
-          lineHeight: '4px',
-          padding: '1.2rem',
-          width: '100%',
-          backgroundColor: palette.primary.main,
-          color: palette.background.alt,
-          '&:hover': {
-            color: palette.primary.main,
-          },
-        }}
-      >
-        Send Email
-      </Button>
+        <TextField
+          onChange={handleInputChange}
+          label='Password Confirm'
+          type={showPasswordConfirm ? 'text' : 'password'}
+          value={passwordConfirm}
+          name='passwordConfirm'
+          sx={{ gridColumn: 'span 4', marginBottom: '1rem', width: '100%' }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position='end'>
+                {showPasswordConfirm ? (
+                  <IconButton onClick={() => togglePasswordConfirm()}>
+                    <VisibilityOffOutlinedIcon />
+                  </IconButton>
+                ) : (
+                  <IconButton onClick={() => togglePasswordConfirm()}>
+                    <RemoveRedEyeOutlined />
+                  </IconButton>
+                )}
+              </InputAdornment>
+            ),
+          }}
+        />
+        <Button
+          type='submit'
+          fullWidth
+          style={{
+            margin: '10px 0',
+            lineHeight: '4px',
+            padding: '1.2rem',
+            width: '100%',
+            backgroundColor: palette.primary.main,
+            color: palette.background.alt,
+            '&:hover': {
+              color: palette.primary.main,
+            },
+          }}
+        >
+          Send Email
+        </Button>
+      </form>
     </Box>
   );
 };

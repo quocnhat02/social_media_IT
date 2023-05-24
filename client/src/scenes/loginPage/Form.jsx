@@ -83,7 +83,7 @@ const Form = () => {
   const isLogin = pageType === 'login';
   const isRegister = pageType === 'register';
   const [showPassword, setShowPassword] = useState(false);
-  const [emailForgot, setEmailForgot] = useState();
+  const [emailForgot, setEmailForgot] = useState('');
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => {
@@ -201,11 +201,43 @@ const Form = () => {
     }
 
     const userData = {
-      emailForgot,
+      email: emailForgot,
     };
 
-    setEmailForgot('');
-    handleClose();
+    const response = await fetch('http://127.0.0.1:3001/users/forgotPassword', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    });
+
+    const { success, message } = await response.json();
+
+    if (success) {
+      handleClose();
+      return toast.success(`🦄 ${message}`, {
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'light',
+      });
+    } else {
+      return toast.success(`🦄 ${message}`, {
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'light',
+      });
+    }
   };
 
   const handleFormSubmit = async (values, onSubmitProps) => {
