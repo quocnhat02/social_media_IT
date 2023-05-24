@@ -37,8 +37,7 @@ function App() {
               path='/resetPassword/:resetToken'
               element={<ResetPassword />}
             />
-            <Route path='/loginWithCode/:email' element={<LoginWithCode />} />
-            {/* <Route path='/verify/:verificationToken' element={<Verify />} /> */}
+            {/* <Route path='/loginWithCode/:email' element={<LoginWithCode />} /> */}
 
             <Route
               path='/notifications'

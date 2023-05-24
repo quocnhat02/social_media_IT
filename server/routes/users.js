@@ -32,6 +32,9 @@ router.patch('/resetPassword/:resetToken', resetPassword);
 // CHANGE PASSWORD
 router.patch('/changePassword', verifyToken, changePassword);
 
+// LOGIN WITH CODE
+// router.post('/sendLoginCode/:email', sendLoginCode);
+
 // UPDATE
 router.patch('/:id/:friendId', verifyToken, addRemoveFriend);
 

@@ -6,6 +6,10 @@ import bcrypt from 'bcrypt';
 import asyncHandler from 'express-async-handler';
 import sendEmail from '../utils/sendEmail.js';
 
+// import Cryptr from 'cryptr';
+
+// const cryptr = new Cryptr('mynameisnhat');
+
 // READ
 export const getUser = async (req, res) => {
   try {
@@ -214,31 +218,85 @@ export const changePassword = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
 
   if (!user) {
-    res.status(404);
-    throw new Error('User not found');
+    return res.status(404).json({
+      success: false,
+      message: 'User not found',
+    });
   }
 
   if (!oldPassword || !password) {
-    res.status(400);
-    throw new Error('Please enter old and new password');
+    return res.status(400).json({
+      success: false,
+      message: 'Please enter old and new password',
+    });
   }
 
   // Check if old password is correct
   const isMatch = await bcrypt.compare(oldPassword, user.password);
 
+  if (!isMatch) {
+    return res.status(403).json({
+      success: false,
+      message: 'Old password is not match',
+    });
+  }
+
   // Save new password
-  if (user && isMatch) {
+  if (user) {
     const salt = await bcrypt.genSalt();
     const passwordHash = await bcrypt.hash(password, salt);
 
     user.password = passwordHash;
     await user.save();
 
-    res.status(200).json({
-      message: 'Password change successful, please re-login',
+    return res.status(200).json({
+      success: true,
+      message: 'Password change successful' + password,
     });
   } else {
-    res.status(400);
-    throw new Error('Old password is incorrect');
+    return res.status(400).json({
+      success: false,
+      message: 'Old password is incorrect',
+    });
   }
 });
+
+// SEND LOGIN WITH CODE
+// export const sendLoginCode = asyncHandler(async (req, res) => {
+//   const { email } = req.params;
+//   const user = await User.findOne({ email });
+
+//   if (!user) {
+//     res.status(404);
+//     throw new Error('User not found');
+//   }
+
+//   // const encryptedLoginCode = cryptr.encrypt(user._id);
+
+//   // const decryptedLoginCode = cryptr.decrypt(encryptedLoginCode);
+
+//   // Send Email
+//   const subject = 'Login Access Code - SOCIAL-MEDIA-IT';
+//   const send_to = email;
+//   const sent_from = process.env.EMAIL_USER;
+//   const reply_to = 'noreply@nhat.com';
+//   const template = 'loginCode';
+//   const name = `${user.lastName} ${user.firstName}`;
+//   const link = user._id;
+
+//   try {
+//     await sendEmail(
+//       subject,
+//       send_to,
+//       sent_from,
+//       reply_to,
+//       template,
+//       name,
+//       link
+//     );
+//     res.status(200).json({ message: 'Password Reset Email Sent' });
+//   } catch (error) {
+//     res.status(500);
+//     throw new Error('Email not sent, please try again');
+//   }
+// });

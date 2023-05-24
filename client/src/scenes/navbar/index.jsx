@@ -9,6 +9,8 @@ import {
   FormControl,
   useTheme,
   useMediaQuery,
+  Modal,
+  TextField,
 } from '@mui/material';
 
 import {
@@ -28,8 +30,33 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setMode, setLogout, setNotifications } from 'state';
 import { useNavigate } from 'react-router-dom';
 import FlexBetween from 'components/FlexBetween';
+import { toast } from 'react-toastify';
+import { Button } from 'react-chat-engine-advanced';
+import axios from 'axios';
+
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  height: 400,
+  backgroundColor: '#537188',
+  border: '2px solid #000',
+  boxShadow: 24,
+  paddingTop: 5,
+  paddingX: 4,
+  paddingBottom: 3,
+};
+
+const initialState = {
+  oldPassword: '',
+  password: '',
+  password2: '',
+};
 
 const Navbar = () => {
+  const { palette } = useTheme();
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
   const notifications = useSelector((state) => state.notifications);
   const dispatch = useDispatch();
@@ -47,6 +74,23 @@ const Navbar = () => {
   const alt = theme.palette.neutral.alt;
 
   const fullName = `${user.firstName} ${user.lastName}`;
+
+  const [formData, setFormData] = useState(initialState);
+  const { oldPassword, password, password2 } = formData;
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+    setFormData({ oldPassword: '', password: '', password2: '' });
+  };
 
   const getAllNotifications = async () => {
     const response = await fetch(
@@ -82,6 +126,65 @@ const Navbar = () => {
     navigate('/notifications');
   };
 
+  const updatePassword = async (e) => {
+    e.preventDefault();
+
+    if (!oldPassword || !password || !password2) {
+      return toast.error('All fields are required');
+    }
+
+    if (password !== password2) {
+      return toast.error('Passwords do not match');
+    }
+
+    const userData = {
+      oldPassword,
+      password,
+    };
+
+    // const emailData = {
+    //   subject: 'Password Changed - SOCIAL MEDIA IT',
+    //   send_to: user.email,
+    //   reply_to: 'noreply@zino',
+    //   template: 'changePassword',
+    //   url: '/forgot',
+    // };
+
+    const response = await fetch('http://127.0.0.1:3001/users/changePassword', {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    });
+
+    const { success, message } = await response.json();
+    if (success) {
+      handleClose();
+      return toast.success(`🦄 ${message}`, {
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'light',
+      });
+    } else {
+      return toast.error(`🦄 ${message}`, {
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'light',
+      });
+    }
+  };
   return (
     <FlexBetween padding='1rem 6%' backgroundColor={alt}>
       <FlexBetween gap='1.75rem'>
@@ -180,7 +283,7 @@ const Navbar = () => {
               <MenuItem value={fullName}>
                 <Typography>{fullName}</Typography>
               </MenuItem>
-              <MenuItem>
+              <MenuItem onClick={handleOpen}>
                 <Typography>Change Password</Typography>
               </MenuItem>
               <MenuItem onClick={() => dispatch(setLogout())}>Logout</MenuItem>
@@ -284,7 +387,7 @@ const Navbar = () => {
                 <MenuItem value={fullName}>
                   <Typography>{fullName}</Typography>
                 </MenuItem>
-                <MenuItem>
+                <MenuItem onClick={handleOpen}>
                   <Typography>Change Password</Typography>
                 </MenuItem>
                 <MenuItem onClick={() => dispatch(setLogout())}>
@@ -295,6 +398,76 @@ const Navbar = () => {
           </FlexBetween>
         </Box>
       )}
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby='child-modal-title'
+        aria-describedby='child-modal-description'
+      >
+        <Box style={{ ...style, width: 400 }}>
+          <form
+            onSubmit={updatePassword}
+            style={{
+              padding: '1.2rem',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              gap: '1rem',
+            }}
+          >
+            <Typography
+              variant='h2'
+              id='child-modal-title'
+              marginBottom={5}
+              color='#FFD95A'
+              textAlign={'center'}
+            >
+              Change Password
+            </Typography>
+
+            <TextField
+              label='Current Password'
+              // type='password'
+              onChange={handleInputChange}
+              value={oldPassword}
+              name='oldPassword'
+              sx={{ gridColumn: 'span 4', width: '100%' }}
+            />
+            <TextField
+              label='New Password'
+              // type='password'
+              onChange={handleInputChange}
+              value={password}
+              name='password'
+              sx={{ gridColumn: 'span 4', width: '100%' }}
+            />
+            <TextField
+              label='Confirm New Password'
+              // type='password'
+              onChange={handleInputChange}
+              value={password2}
+              name='password2'
+              sx={{ gridColumn: 'span 4', width: '100%' }}
+            />
+            <Button
+              fullWidth
+              type='submit'
+              style={{
+                lineHeight: '4px',
+                padding: '1rem',
+                width: '100%',
+                backgroundColor: palette.primary.main,
+                color: palette.background.alt,
+                '&:hover': {
+                  color: palette.primary.main,
+                },
+              }}
+            >
+              Change Password
+            </Button>
+          </form>
+        </Box>
+      </Modal>
     </FlexBetween>
   );
 };
