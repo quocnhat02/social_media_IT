@@ -11,6 +11,7 @@ import {
   Divider,
   IconButton,
   InputBase,
+  TextField,
   Typography,
   useMediaQuery,
 } from '@mui/material';
@@ -225,7 +226,7 @@ const PostDetail = () => {
                 <ShareOutlined />
               </IconButton>
             </FlexBetween>
-            <InputBase
+            <TextField
               placeholder='Enter a comment'
               sx={{
                 fontSize: '1.1rem',

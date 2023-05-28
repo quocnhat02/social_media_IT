@@ -6,6 +6,10 @@ import { useNavigate } from 'react-router-dom';
 const Notification = ({ notifications }) => {
   const navigate = useNavigate();
 
+  const handleNotification = (notification) => {
+    navigate(notification.onClick);
+  };
+
   return (
     <Box mt={4}>
       {!notifications ? (
@@ -21,7 +25,7 @@ const Notification = ({ notifications }) => {
                 opacity: 0.8,
               },
             }}
-            onClick={() => navigate(notification.onClick)}
+            onClick={() => handleNotification(notification)}
           >
             <Typography variant='h3'>{notification.title}</Typography>
             <Typography variant='h5' sx={{ color: 'orange' }}>

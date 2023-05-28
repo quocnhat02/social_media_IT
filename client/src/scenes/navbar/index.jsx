@@ -142,14 +142,6 @@ const Navbar = () => {
       password,
     };
 
-    // const emailData = {
-    //   subject: 'Password Changed - SOCIAL MEDIA IT',
-    //   send_to: user.email,
-    //   reply_to: 'noreply@zino',
-    //   template: 'changePassword',
-    //   url: '/forgot',
-    // };
-
     const response = await fetch('http://127.0.0.1:3001/users/changePassword', {
       method: 'PATCH',
       headers: {
@@ -427,7 +419,7 @@ const Navbar = () => {
 
             <TextField
               label='Current Password'
-              // type='password'
+              type='password'
               onChange={handleInputChange}
               value={oldPassword}
               name='oldPassword'
@@ -435,7 +427,7 @@ const Navbar = () => {
             />
             <TextField
               label='New Password'
-              // type='password'
+              type='password'
               onChange={handleInputChange}
               value={password}
               name='password'
@@ -443,7 +435,7 @@ const Navbar = () => {
             />
             <TextField
               label='Confirm New Password'
-              // type='password'
+              type='password'
               onChange={handleInputChange}
               value={password2}
               name='password2'
