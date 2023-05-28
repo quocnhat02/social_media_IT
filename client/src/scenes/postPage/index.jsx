@@ -231,6 +231,7 @@ const PostDetail = () => {
               sx={{
                 fontSize: '1.1rem',
                 marginTop: '0.5rem',
+                width: '100%',
               }}
             />
             {isComments && (

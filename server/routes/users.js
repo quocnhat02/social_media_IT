@@ -9,6 +9,7 @@ import {
   forgotPassword,
   resetPassword,
   changePassword,
+  updateNotification,
 } from '../controllers/users.js';
 import { verifyToken } from '../middlewares/auth.js';
 
@@ -31,6 +32,9 @@ router.patch('/resetPassword/:resetToken', resetPassword);
 
 // CHANGE PASSWORD
 router.patch('/changePassword', verifyToken, changePassword);
+
+// UPDATE NOTIFICATION
+router.patch('/updateNotification', verifyToken, updateNotification);
 
 // LOGIN WITH CODE
 // router.post('/sendLoginCode/:email', sendLoginCode);

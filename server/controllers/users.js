@@ -321,3 +321,24 @@ export const changePassword = asyncHandler(async (req, res) => {
 //     throw new Error('Email not sent, please try again');
 //   }
 // });
+
+export const updateNotification = asyncHandler(async (req, res) => {
+  const notification = req.body;
+
+  const notificationFound = await Notification.findById(notification._id);
+
+  if (!notificationFound) {
+    return res.status(400).json({
+      success: false,
+      message: 'Notification not found',
+    });
+  }
+
+  notificationFound.read = true;
+  await notificationFound.save();
+
+  return res.status(200).json({
+    success: true,
+    message: 'Notification update successful',
+  });
+});
