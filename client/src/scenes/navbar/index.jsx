@@ -24,7 +24,8 @@ import {
   Close,
   Info,
 } from '@mui/icons-material';
-
+import QuizOutlinedIcon from '@mui/icons-material/QuizOutlined';
+import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
 // import InfoIcon from '@mui/icons-material/Info';
 import { useDispatch, useSelector } from 'react-redux';
 import { setMode, setLogout, setNotifications } from 'state';
@@ -223,6 +224,12 @@ const Navbar = () => {
               <LightMode sx={{ color: dark, fontSize: '25px' }} />
             )}
           </IconButton>
+          <IconButton onClick={() => navigate('/admin/exams')}>
+            <QuizOutlinedIcon sx={{ fontSize: '25px' }} />
+          </IconButton>
+          <IconButton onClick={() => navigate('/exams')}>
+            <SchoolOutlinedIcon sx={{ fontSize: '25px' }} />
+          </IconButton>
           <IconButton onClick={() => navigate('/chat')}>
             <Message sx={{ fontSize: '25px' }} />
           </IconButton>
@@ -328,6 +335,12 @@ const Navbar = () => {
               ) : (
                 <LightMode sx={{ color: dark, fontSize: '25px' }} />
               )}
+            </IconButton>
+            <IconButton onClick={() => navigate('/admin/exams')}>
+              <QuizOutlinedIcon sx={{ fontSize: '25px' }} />
+            </IconButton>
+            <IconButton onClick={() => navigate('/exams')}>
+              <SchoolOutlinedIcon sx={{ fontSize: '25px' }} />
             </IconButton>
             <IconButton onClick={() => navigate('/chat')}>
               <Message sx={{ fontSize: '25px' }} />

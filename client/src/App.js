@@ -15,6 +15,11 @@ import ChatPage from 'scenes/chatPage/ChatPage';
 import PostDetail from 'scenes/postPage';
 import ResetPassword from 'scenes/loginPage/ResetPassword';
 import LoginWithCode from 'scenes/loginPage/LoginWithCode';
+import QuizPage from 'scenes/quizPage';
+import AddEditExam from 'scenes/quizPage/exams/AddEditExam';
+import Loader from 'scenes/quizPage/quizComponent/Loader';
+import HomeQuizPage from 'scenes/quizPage/homeQuizPage';
+import WriteExam from 'scenes/quizPage/writeExam';
 
 function App() {
   const mode = useSelector((state) => state.mode);
@@ -54,6 +59,29 @@ function App() {
             <Route
               path='/profile/:userId'
               element={isAuth ? <ProfilePage /> : <Navigate to='/' />}
+            />
+
+            <Route
+              path='/exams'
+              element={isAuth ? <HomeQuizPage /> : <Navigate to='/' />}
+            />
+
+            <Route
+              path='/user/write-exam/:id'
+              element={isAuth ? <WriteExam /> : <Navigate to='/' />}
+            />
+
+            <Route
+              path='/admin/exams'
+              element={isAuth ? <QuizPage /> : <Navigate to='/' />}
+            />
+            <Route
+              path='/admin/exams/add'
+              element={isAuth ? <AddEditExam /> : <Navigate to='/' />}
+            />
+            <Route
+              path='/admin/exams/edit/:id'
+              element={isAuth ? <AddEditExam /> : <Navigate to='/' />}
             />
           </Routes>
         </ThemeProvider>

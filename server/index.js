@@ -12,6 +12,7 @@ import authRoutes from './routes/auth.js';
 import userRoutes from './routes/users.js';
 import postRoutes from './routes/posts.js';
 import chatRoutes from './routes/chat.js';
+import examRoutes from './routes/exam.js';
 import messageRoutes from './routes/message.js';
 import { register } from './controllers/auth.js';
 import { createPost } from './controllers/posts.js';
@@ -61,6 +62,8 @@ app.use('/posts', postRoutes);
 
 app.use('/api/chat', chatRoutes);
 app.use('/api/message', messageRoutes);
+
+app.use('/api/exams', examRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
