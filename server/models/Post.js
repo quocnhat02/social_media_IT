@@ -24,10 +24,7 @@ const postSchema = mongoose.Schema(
       type: Map,
       of: Boolean,
     },
-    comments: {
-      type: Array,
-      default: [],
-    },
+    comments: [{ type: mongoose.Types.ObjectId, ref: 'Comment' }],
   },
   { timestamps: true }
 );

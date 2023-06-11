@@ -28,6 +28,7 @@ export const register = async (req, res) => {
       location,
       occupation,
       viewedProfile: 0,
+      role: 'USER'
     });
 
     const savedUser = await newUser.save();

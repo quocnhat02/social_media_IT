@@ -1,6 +1,7 @@
 import Post from '../models/Post.js';
 import User from '../models/User.js';
 import Notification from '../models/Notification.js';
+import Comment from '../models/Comment.js';
 
 // CREATE
 export const createPost = async (req, res) => {
@@ -32,7 +33,13 @@ export const createPost = async (req, res) => {
 // READ
 export const getFeedPosts = async (req, res) => {
   try {
-    const post = await Post.find();
+    const post = await Post.find().populate({
+      path: "comments",
+      populate: {
+          path: "user likes",
+          select: "-password"
+      }
+  });
 
     res.status(200).json(post);
   } catch (error) {
@@ -54,8 +61,13 @@ export const getUserPosts = async (req, res) => {
 export const getDetailPost = async (req, res) => {
   try {
     const { postId } = req.params;
-    const post = await Post.findById(postId);
-
+    const post = await Post.findById(postId).populate({
+      path: "comments",
+      populate: {
+          path: "user likes",
+          select: "-password"
+      }
+  });
     res.status(200).json(post);
   } catch (error) {
     res.status(404).json({ message: error.message });

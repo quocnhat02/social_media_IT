@@ -1,11 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useTheme } from '@emotion/react';
+import { useTheme } from "@emotion/react";
 import {
   ChatBubbleOutlineOutlined,
   FavoriteBorderOutlined,
   FavoriteOutlined,
   ShareOutlined,
-} from '@mui/icons-material';
+} from "@mui/icons-material";
 import {
   Box,
   Divider,
@@ -14,21 +14,21 @@ import {
   TextField,
   Typography,
   useMediaQuery,
-} from '@mui/material';
-import FlexBetween from 'components/FlexBetween';
-import Friend from 'components/Friend';
-import WidgetWrapper from 'components/WidgetWrapper';
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import Navbar from 'scenes/navbar';
-import FriendListWidget from 'scenes/widgets/FriendListWidget';
-import UserWidget from 'scenes/widgets/UserWidget';
-import { io } from 'socket.io-client';
-import { setNotifications, setPost, setUnreadCount } from 'state';
+} from "@mui/material";
+import FlexBetween from "components/FlexBetween";
+import Friend from "components/Friend";
+import WidgetWrapper from "components/WidgetWrapper";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import Navbar from "scenes/navbar";
+import FriendListWidget from "scenes/widgets/FriendListWidget";
+import UserWidget from "scenes/widgets/UserWidget";
+import { io } from "socket.io-client";
+import { setNotifications, setPost, setUnreadCount } from "state";
 
-const socket = io('http://localhost:3001');
+const socket = io("http://localhost:3001");
 
 const PostDetail = () => {
   const { postId } = useParams();
@@ -49,7 +49,7 @@ const PostDetail = () => {
   const main = palette.neutral.main;
   const primary = palette.primary.main;
 
-  const isNonMobileScreens = useMediaQuery('(min-width:1000px)');
+  const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
   const { _id, picturePath } = useSelector((state) => state.user);
   const unreadCount = useSelector((state) => state.unreadCount);
 
@@ -57,10 +57,10 @@ const PostDetail = () => {
     const response = await fetch(
       `http://localhost:3001/users/notifications/${loggedInUserId}`,
       {
-        method: 'GET',
+        method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       }
     );
@@ -86,17 +86,17 @@ const PostDetail = () => {
 
   const patchLike = async () => {
     const response = await fetch(`http://localhost:3001/posts/${postId}/like`, {
-      method: 'PATCH',
+      method: "PATCH",
       headers: {
         Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         userId: loggedInUserId,
         notificationPayload: {
           user: blog.userId,
           title: `${user.firstName} ${user.lastName} ${
-            isLiked ? 'unliked' : 'liked'
+            isLiked ? "unliked" : "liked"
           } your blog has title: ${blog.title}`,
           onClick: `/posts/${postId}`,
         },
@@ -104,15 +104,15 @@ const PostDetail = () => {
     });
 
     if (user._id !== blog.userId) {
-      socket.emit('newNotification', {
+      socket.emit("newNotification", {
         userId: blog.userId,
         title: `${user.firstName} ${user.lastName} ${
-          isLiked ? 'unliked' : 'liked'
+          isLiked ? "unliked" : "liked"
         } your blog has title: ${blog.title}`,
         onClick: `/posts/${postId}`,
       });
     }
-    socket.emit('create post');
+    socket.emit("create post");
 
     const updatedPost = await response.json();
     dispatch(setPost({ post: updatedPost }));
@@ -124,7 +124,7 @@ const PostDetail = () => {
 
   const getPostDetail = async () => {
     const response = await fetch(`http://localhost:3001/posts/${postId}`, {
-      method: 'GET',
+      method: "GET",
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -136,19 +136,19 @@ const PostDetail = () => {
 
   useEffect(() => {
     if (user) {
-      socket.emit('join', user._id);
+      socket.emit("join", user._id);
     }
 
-    socket.off('newNotification').on('newNotification', (data) => {
+    socket.off("newNotification").on("newNotification", (data) => {
       toast.info(`🦄 ${data.title}`, {
-        position: 'top-right',
+        position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        theme: 'light',
+        theme: "light",
       });
       dispatch(setUnreadCount(unreadCount + 1));
       setFetchAgain(!fetchAgain);
@@ -159,24 +159,46 @@ const PostDetail = () => {
     getPostDetail();
   }, []);
 
+  const handleKeyDown = async (event) => {
+    if (event.key === "Enter") {
+      console.log(event.target.value);
+      const response = await fetch(`http://localhost:3001/comments`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          postId,
+          content: event.target.value,
+          tag: null,
+          postUserId: loggedInUserId,
+        }),
+      });
+      const data = await response.json();
+      event.target.value = "";
+      // 👇 Get input value
+    }
+  };
+
   return (
     <Box>
       <Navbar />
       <Box
-        width='100%'
-        padding='2rem 6%'
-        display={isNonMobileScreens ? 'flex' : 'block'}
-        gap='2rem'
-        justifyContent='center'
+        width="100%"
+        padding="2rem 6%"
+        display={isNonMobileScreens ? "flex" : "block"}
+        gap="2rem"
+        justifyContent="center"
       >
-        <Box flexBasis={isNonMobileScreens ? '26%' : undefined}>
+        <Box flexBasis={isNonMobileScreens ? "26%" : undefined}>
           <UserWidget userId={_id} picturePath={user.picturePath} />
-          <Box m='2rem 0' />
+          <Box m="2rem 0" />
           <FriendListWidget userId={_id} />
         </Box>
         <Box
-          flexBasis={isNonMobileScreens ? '52%' : undefined}
-          mt={isNonMobileScreens ? undefined : '2rem'}
+          flexBasis={isNonMobileScreens ? "52%" : undefined}
+          mt={isNonMobileScreens ? undefined : "2rem"}
         >
           <WidgetWrapper>
             <Friend
@@ -185,25 +207,25 @@ const PostDetail = () => {
               subtitle={blog?.location}
               userPicturePath={blog?.picturePath}
             />
-            <Typography color={main} sx={{ mt: '1rem' }}>
+            <Typography color={main} sx={{ mt: "1rem" }}>
               {blog?.title}
             </Typography>
             <br />
-            <Typography color={main} style={{ mt: '1rem' }}>
+            <Typography color={main} style={{ mt: "1rem" }}>
               {blog?.description}
             </Typography>
             {blog?.picturePath && (
               <img
-                width='100%'
-                height='auto'
-                alt='post'
-                style={{ borderRadius: '0.75rem', marginTop: '0.75rem' }}
+                width="100%"
+                height="auto"
+                alt="post"
+                style={{ borderRadius: "0.75rem", marginTop: "0.75rem" }}
                 src={`http://localhost:3001/assets/${blog?.picturePath}`}
               />
             )}
-            <FlexBetween mt='0.25rem'>
-              <FlexBetween gap='1rem'>
-                <FlexBetween gap='0.3rem'>
+            <FlexBetween mt="0.25rem">
+              <FlexBetween gap="1rem">
+                <FlexBetween gap="0.3rem">
                   <IconButton onClick={patchLike}>
                     {isLiked ? (
                       <FavoriteOutlined sx={{ color: primary }} />
@@ -214,7 +236,7 @@ const PostDetail = () => {
                   <Typography>{likeCount}</Typography>
                 </FlexBetween>
 
-                <FlexBetween gap='0.3rem'>
+                <FlexBetween gap="0.3rem">
                   <IconButton onClick={() => setIsComments(!isComments)}>
                     <ChatBubbleOutlineOutlined />
                   </IconButton>
@@ -226,25 +248,30 @@ const PostDetail = () => {
                 <ShareOutlined />
               </IconButton>
             </FlexBetween>
-            <TextField
-              placeholder='Enter a comment'
-              sx={{
-                fontSize: '1.1rem',
-                marginTop: '0.5rem',
-                width: '100%',
-              }}
-            />
+
             {isComments && (
-              <Box mt='0.7rem'>
+              <Box mt="0.7rem">
                 {blog?.comments.map((comment, i) => (
                   <Box key={`${`${blog?.firstName}${blog?.lastName}`}-${i}`}>
                     <Divider />
-                    <Typography sx={{ color: main, m: '0.5rem 0', pl: '1rem' }}>
-                      {comment}
+                    <b>
+                      {comment.user.firstName} {comment.user.lastName}
+                    </b>
+                    <Typography sx={{ color: main, m: "0.5rem 0", pl: "1rem" }}>
+                      {comment.content}
                     </Typography>
                   </Box>
                 ))}
                 <Divider />
+                <TextField
+                  onKeyDown={handleKeyDown}
+                  placeholder="Enter a comment"
+                  sx={{
+                    fontSize: "1.1rem",
+                    marginTop: "0.5rem",
+                    width: "100%",
+                  }}
+                />
               </Box>
             )}
           </WidgetWrapper>

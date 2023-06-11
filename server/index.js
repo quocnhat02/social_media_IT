@@ -11,6 +11,7 @@ import { fileURLToPath } from 'url';
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/users.js';
 import postRoutes from './routes/posts.js';
+import commentRoutes from './routes/comment.js';
 import chatRoutes from './routes/chat.js';
 import examRoutes from './routes/exam.js';
 import messageRoutes from './routes/message.js';
@@ -59,6 +60,7 @@ app.post('/posts', verifyToken, upload.single('picture'), createPost);
 app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
 app.use('/posts', postRoutes);
+app.use('/comments', commentRoutes);
 
 app.use('/api/chat', chatRoutes);
 app.use('/api/message', messageRoutes);
@@ -130,6 +132,29 @@ io.on('connection', (socket) => {
     console.log('USER DISCONNECTED');
     socket.leave(userData._id);
   });
+  //comment
+  socket.on('createComment', newPost => {
+    const ids = [...newPost.user.followers, newPost.user._id]
+    const clients = users.filter(user => ids.includes(user.id))
+
+    if(clients.length > 0){
+        clients.forEach(client => {
+            socket.to(`${client.socketId}`).emit('createCommentToClient', newPost)
+        })
+    }
+})
+
+socket.on('deleteComment', newPost => {
+    const ids = [...newPost.user.followers, newPost.user._id]
+    const clients = users.filter(user => ids.includes(user.id))
+
+    if(clients.length > 0){
+        clients.forEach(client => {
+            socket.to(`${client.socketId}`).emit('deleteCommentToClient', newPost)
+        })
+    }
+})
+  
 });
 
 // MONGOOSE
